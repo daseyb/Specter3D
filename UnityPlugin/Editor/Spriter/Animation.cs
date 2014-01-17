@@ -8,7 +8,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
 {
     public class LoopType
     {
-        public string Name { get; private readonly set; }
+        public string Name { get; private set; }
 
         public static readonly LoopType INVALID = new LoopType() { Name = "INVALID" };
         public static readonly LoopType True = new LoopType() { Name = "true" };
@@ -33,7 +33,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
 
     public class Animation : KeyElem
     {
-        public static const string XmlKey = "animation";
+        public const string XmlKey = "animation";
 
         public string Name { get; private set; }
         public int Length_Ms { get; private set; }

@@ -9,7 +9,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
 {
     public class SpriteTimelineKey : SpatialTimelineKey
     {
-        public static const string XmlKey = "object";
+        new public const string XmlKey = "object";
 
         public File File { get; private set; }
         public Vector2 Pivot { get; private set; }

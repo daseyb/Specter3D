@@ -8,7 +8,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
 {
     public class Folder : KeyElem
     {
-        public static const string XmlKey = "folder";
+        public const string XmlKey = "folder";
 
         public string Name { get; private set; }
         public IEnumerable<File> Files { get; private set; }

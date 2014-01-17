@@ -9,7 +9,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
 {
     public class BoneTimelineKey : SpatialTimelineKey
     {
-        public static const string XmlKey = "bone";
+        new public const string XmlKey = "bone";
 
         public Color Tint { get; private set; }
 

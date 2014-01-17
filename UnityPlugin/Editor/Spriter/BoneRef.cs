@@ -8,7 +8,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
 {
     public class BoneRef : KeyElem
     {
-        public static const string XmlKey = "bone_ref";
+        public const string XmlKey = "bone_ref";
 
         public BoneTimelineKey Referenced { get; private set; }
         public BoneRef Parent { get; private set; }

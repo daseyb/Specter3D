@@ -8,7 +8,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
 {
     public class Timeline : KeyElem
     {
-        public static const string XmlKey = "timeline";
+        public const string XmlKey = "timeline";
 
         public string Name { get; private set; }
         public ObjectType ObjectType { get; private set; }
@@ -24,7 +24,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
 
             Name = element.GetString("name", "");
 
-            ObjectType = ObjectTypeUtil.Parse(element);
+            ObjectType = ObjectType.Parse(element);
 
             var children = element.GetElementsByTagName(TimelineKey.XmlKey);
             foreach (XmlElement childElement in children)
@@ -46,7 +46,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
                 var obj = element[SpriteTimelineKey.XmlKey];
                 if(obj != null)
                 {
-                    var objType = ObjectTypeUtil.Parse(obj);
+                    var objType = ObjectType.Parse(obj);
                     if (objType == ObjectType.Sprite)
                     {
                         return new SpriteTimelineKey(element);

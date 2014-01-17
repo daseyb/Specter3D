@@ -8,9 +8,9 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
 {
     public class ObjectRef : KeyElem
     {
-        public static const string XmlKey = "object_ref";
+        public const string XmlKey = "object_ref";
 
-        public SpriterObject Referenced { get; private set; }
+        public TimelineKey Referenced { get; private set; }
         public BoneRef Parent { get; private set; }
         public int ZIndex { get; private set; }
 

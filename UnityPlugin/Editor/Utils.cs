@@ -6,7 +6,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor
 {
     public static class XmlUtils
     {
-        public static string TryGetString(this XmlNode node, string key, out string value)
+        public static bool TryGetString(this XmlNode node, string key, out string value)
         {
             value = default(string);
             var attr = node.Attributes[key];

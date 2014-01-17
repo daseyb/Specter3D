@@ -8,9 +8,10 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
 {
     public class Entity : KeyElem
     {
-        public static const string XmlKey = "entity";
+        public const string XmlKey = "entity";
 
         public string Name { get; private set; }
+        public IEnumerable<Animation> Animations { get { return animations; } }
 
         public Entity(XmlElement element)
             : base(element)

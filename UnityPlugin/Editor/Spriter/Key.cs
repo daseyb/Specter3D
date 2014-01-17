@@ -8,7 +8,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
 {
     public class Key : KeyElem
     {
-        public static const string XmlKey = "key";
+        public const string XmlKey = "key";
 
         public int Time_Ms { get; private set; }
         public float Time { get { return ((float)Time_Ms) / 1000; } }

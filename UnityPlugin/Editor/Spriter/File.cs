@@ -18,7 +18,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
 
     public class File : KeyElem
     {
-        public static const string XmlKey = "file";
+        public const string XmlKey = "file";
 
         public File(XmlElement element)
             :base(element)
