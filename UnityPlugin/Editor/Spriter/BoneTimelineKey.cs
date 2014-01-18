@@ -13,21 +13,22 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
 
         public Color Tint { get; private set; }
 
-        public BoneTimelineKey(XmlElement element)
-            :base(element["bone"])
+        public BoneTimelineKey(XmlElement element, Timeline timeline)
+            :base(element, timeline)
         {        }
 
         protected override void Parse(XmlElement element)
         {
             base.Parse(element);
 
-            Spatial = new SpatialInfo(element);
+			var boneElem = element ["bone"];
+			Spatial = new SpatialInfo(boneElem);
 
             Color tint = Color.white;
-            tint.r = element.GetFloat("r", 1.0f);
-            tint.g = element.GetFloat("g", 1.0f);
-            tint.b = element.GetFloat("b", 1.0f);
-            tint.a = element.GetFloat("a", 1.0f);
+			tint.r = boneElem.GetFloat("r", 1.0f);
+			tint.g = boneElem.GetFloat("g", 1.0f);
+			tint.b = boneElem.GetFloat("b", 1.0f);
+			tint.a = boneElem.GetFloat("a", 1.0f);
             Tint = tint;
         }
     }

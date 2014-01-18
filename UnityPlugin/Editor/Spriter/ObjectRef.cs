@@ -6,30 +6,20 @@ using System.Xml;
 
 namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
 {
-    public class ObjectRef : KeyElem
+    public class ObjectRef : Ref
     {
         public const string XmlKey = "object_ref";
 
-        public TimelineKey Referenced { get; private set; }
-        public BoneRef Parent { get; private set; }
         public int ZIndex { get; private set; }
 
-        public ObjectRef(XmlElement element, MainlineKey parentKey)
-            :base(element)
-        {
-            Parse(element, parentKey);
-        }
+        public ObjectRef(XmlElement element, Animation animation, MainlineKey parentKey)
+            : base(element, animation, parentKey)
+        { }
 
-        protected virtual void Parse(XmlElement element, MainlineKey parentKey)
+        protected override void Parse(XmlElement element)
         {
-            //TODO: Referenced
-
-            int parentId = element.GetInt("parent", -1);
-            if (parentId >= 0)
-            {
-                Parent = parentKey.GetBoneRef(parentId);
-            }
-            //TODO: ZIndex
+            base.Parse(element);
+            ZIndex = element.GetInt("z_index", Id);
         }
     }
 }

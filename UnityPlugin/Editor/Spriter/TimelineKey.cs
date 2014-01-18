@@ -8,11 +8,19 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
 {
     public class TimelineKey : Key
     {
+        public Timeline Timeline { get; private set; }
         public CurveType CurveType { get; private set; }
 
-        public TimelineKey(XmlElement element)
-            :base(element)
-        { }
+        public TimelineKey(XmlElement element, Timeline timeline)
+            : base(element)
+        {
+			Parse (element, timeline);
+        }
+
+		protected virtual void Parse(XmlElement element, Timeline timeline)
+		{
+			Timeline = timeline;
+				}
 
         protected override void Parse(System.Xml.XmlElement element)
         {

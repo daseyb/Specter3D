@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Xml;
+using UnityEditor;
+using Assets.ThirdParty.Spriter2Unity.Editor.Spriter;
 
 namespace Assets.ThirdParty.Spriter2Unity.Editor
 {

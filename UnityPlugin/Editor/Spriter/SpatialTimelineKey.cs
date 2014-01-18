@@ -11,8 +11,8 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
     {
         public SpatialInfo Spatial { get; protected set; }
 
-        public SpatialTimelineKey(XmlElement element)
-            :base(element)
+        public SpatialTimelineKey(XmlElement element, Timeline timeline)
+            :base(element, timeline)
         { }
     }
 }

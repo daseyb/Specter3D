@@ -6,11 +6,19 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using Assets.ThirdParty.Spriter2Unity.Editor.Spriter;
+using Assets.ThirdParty.Spriter2Unity.Editor.Unity;
 
 namespace Assets.ThirdParty.Spriter2Unity.Editor
 {
     public static class Spriter2Unity
     {
+        [MenuItem("My Menu/Test SCML Import")]
+        public static void TestImport()
+        {
+            const string scmlPath = "C:/Users/andre_000/Documents/Spriter/BasicPlatfortmerPack_Essentials/PlatformerPack/playerTest.scml";
+            ImportScml("", scmlPath);
+        }
+
         public static void ImportScml(string baseAssetPath, string scmlFilePath)
         {
             var doc = new XmlDocument();
@@ -19,8 +27,9 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor
             //Parse the SCML file
             var scml = new ScmlObject(doc);
 
-            //Verify that all files/folders exist
-
+            //TODO: Verify that all files/folders exist
+            var pb = new PrefabBuilder();
+            pb.MakePrefab(scml.Entities.FirstOrDefault());
         }
 
         private static void CheckFiles(string baseAssetPath, ScmlObject scml)

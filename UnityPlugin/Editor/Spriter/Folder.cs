@@ -20,6 +20,8 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
 
         protected override void Parse(XmlElement element)
         {
+            base.Parse(element);
+
             Name = element.GetString("name", "");
 
             //Parse file elements
@@ -27,9 +29,14 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
             var files = new List<File>(fileElements.Count);
             foreach(XmlElement fileElement in fileElements)
             {
-                files.Add(new File(fileElement));
+                files.Add(new File(fileElement, this));
             }
             Files = files;
         }
+
+		public File GetFile(int id)
+		{
+			return Files.Where (file => file.Id == id).FirstOrDefault();
+		}
     }
 }

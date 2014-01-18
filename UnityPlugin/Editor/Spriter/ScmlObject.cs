@@ -29,7 +29,8 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
             string pixelArt = element.GetString("pixel_art_mode", "false");
             PixelArtMode = pixelArt == "true";
             
-
+			LoadFolders (element);
+			LoadEntities (element);
         }
 
         private void LoadFolders(XmlElement element)
@@ -46,9 +47,14 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
             var entityElems = element.GetElementsByTagName(Entity.XmlKey);
             foreach (XmlElement entityElem in entityElems)
             {
-                entities.Add(new Entity(entityElem));
+                entities.Add(new Entity(entityElem, this));
             }
         }
+
+		public Folder GetFolder(int id)
+		{
+			return folders.Where (folder => folder.Id == id).FirstOrDefault ();
+				}
 
         private List<Folder> folders = new List<Folder>();
         private List<Entity> entities = new List<Entity>();

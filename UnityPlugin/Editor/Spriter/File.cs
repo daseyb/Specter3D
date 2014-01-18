@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using UnityEditor;
 
 namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
 {
@@ -20,11 +21,13 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
     {
         public const string XmlKey = "file";
 
-        public File(XmlElement element)
+        public File(XmlElement element, Folder folder)
             :base(element)
         {
+            Parse(element, folder);
         }
 
+        public Folder Folder { get; private set; }
         public FileType FileType { get; private set; }
         public string Name { get; private set; }
         public Vector2 Pivot { get; private set; }
@@ -32,9 +35,9 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
         public Vector2 Offset { get; private set; }
         public Vector2 OriginalSize { get; private set; }
 
-        protected override void Parse(XmlElement element)
+        protected virtual void Parse(XmlElement element, Folder folder)
         {
-            base.Parse(element);
+            Folder = folder;
 
             var type = element.GetString("type", "image");
             switch(type)
@@ -78,5 +81,47 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
             originalSize.y = element.GetInt("original_height", 0);
             OriginalSize = originalSize;
         }
+
+#if UNITY_EDITOR
+        private string FolderName
+        {
+            get
+            {
+                return Name.Substring(0, Name.IndexOf('/') - 1);
+            }
+        }
+
+        private string ImageName
+        {
+            get
+            {
+                return Name.Substring(Name.IndexOf('/')+1);
+            }
+        }
+
+        private Sprite sprite = null;
+        public Sprite GetSprite()
+        {
+            if (sprite == null)
+            {
+                var assetPath = AssetDatabase.GetAllAssetPaths().Where(path => path.EndsWith(Name)).FirstOrDefault();
+                if (!string.IsNullOrEmpty(assetPath))
+                {
+                    sprite = AssetDatabase.LoadAssetAtPath(assetPath, typeof(Sprite)) as Sprite;
+                }
+            }
+            return sprite;
+        }
+
+        public Vector2 GetPivotOffetFromMiddle()
+        {
+            var mid = Size / 2;
+            var pvt = new Vector2(
+                Size.x * Pivot.x,
+                Size.y * Pivot.y);
+
+            return mid - pvt;
+        }
+#endif
     }
 }

@@ -35,6 +35,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
     {
         public const string XmlKey = "animation";
 
+		public Entity Entity {get;private set;}
         public string Name { get; private set; }
         public int Length_Ms { get; private set; }
         public float Length { get { return ((float)Length_Ms) / 1000; } }
@@ -43,19 +44,27 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
         public IEnumerable<MainlineKey> MainlineKeys { get { return mainlineKeys; } }
         public IEnumerable<Timeline> Timelines { get { return timelines; } }
 
-        public Animation(XmlElement element)
+        public Animation(XmlElement element, Entity entity)
             : base(element)
-        { }
+        { 
+			Parse (element, entity);
+		}
 
-        protected override void Parse(XmlElement element)
+        public Timeline GetTimeline(int id)
         {
-            base.Parse(element);
+            return Timelines.Where(timeline => timeline.Id == id).FirstOrDefault();
+        }
+
+        protected virtual void Parse(XmlElement element, Entity entity)
+		{
+			Entity = entity;
 
             Name = element.GetString("name", "");
             Length_Ms = element.GetInt("length", -1);
             LoopType = LoopType.Parse(element);
             LoopTo = element.GetInt("loop_to", 0);
 
+            LoadTimelines(element);
             LoadMainline(element);
         }
 
@@ -65,7 +74,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
             var mainlineKeyElems = mainlineElem.GetElementsByTagName(Key.XmlKey);
             foreach (XmlElement mainlineKeyElem in mainlineKeyElems)
             {
-                mainlineKeys.Add(new MainlineKey(mainlineKeyElem));
+                mainlineKeys.Add(new MainlineKey(mainlineKeyElem, this));
             }
         }
 
@@ -74,7 +83,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
             var timelineElems = element.GetElementsByTagName(Timeline.XmlKey);
             foreach(XmlElement timelineElem in timelineElems)
             {
-                timelines.Add(new Timeline(element));
+                timelines.Add(new Timeline(timelineElem, this));
             }
         }
 

@@ -22,14 +22,17 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
 
     public class MainlineKey : Key
     {
-        public IEnumerable<BoneRef> BoneRefs { get { return boneRefs; } }
-        public IEnumerable<ObjectRef> ObjectRefs { get { return objectRefs; } }
+        public IEnumerable<Ref> Refs { get { return refs; } }
+        public IEnumerable<BoneRef> BoneRefs { get { return refs.OfType<BoneRef>(); } }
+        public IEnumerable<ObjectRef> ObjectRefs { get { return refs.OfType<ObjectRef>(); } }
 
-        public MainlineKey(XmlElement element)
+        public MainlineKey(XmlElement element, Animation animation)
             : base(element)
-        { }
+        {
+            Parse(element, animation);
+        }
         
-        protected override void Parse(XmlElement element)
+        protected virtual void Parse(XmlElement element, Animation animation)
         {
             //Get elements
             //TODO: Ensure proper ordering of elements to prevent dependency errors
@@ -42,10 +45,10 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
                     switch(childElement.Name)
                     {
                         case BoneRef.XmlKey:
-                            boneRefs.Add(new BoneRef(childElement, this));
+                            refs.Add(new BoneRef(childElement, animation, this));
                             break;
                         case ObjectRef.XmlKey:
-                            objectRefs.Add(new ObjectRef(childElement, this));
+                            refs.Add(new ObjectRef(childElement, animation, this));
                             break;
                     }
                 }
@@ -54,15 +57,19 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
 
         public BoneRef GetBoneRef(int id)
         {
-            return boneRefs.Where(bone => bone.Id == id).FirstOrDefault();
+            return refs.Where(bone => bone.Id == id).OfType<BoneRef>().FirstOrDefault();
         }
 
         public ObjectRef GetObjectRef(int id)
         {
-            return objectRefs.Where(obj => obj.Id == id).FirstOrDefault();
+            return refs.Where(obj => obj.Id == id).OfType<ObjectRef>().FirstOrDefault();
         }
 
-        private List<BoneRef> boneRefs = new List<BoneRef>();
-        private List<ObjectRef> objectRefs = new List<ObjectRef>();
+        public IEnumerable<Ref> GetChildren(Ref parent)
+        {
+            return refs.Where(obj => obj.Parent == parent);
+        }
+
+        private List<Ref> refs = new List<Ref>();
     }
 }

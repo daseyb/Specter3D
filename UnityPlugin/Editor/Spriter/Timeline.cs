@@ -10,18 +10,20 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
     {
         public const string XmlKey = "timeline";
 
+		public Animation Animation { get; private set; }
         public string Name { get; private set; }
         public ObjectType ObjectType { get; private set; }
         public IEnumerable<TimelineKey> Keys { get{return keys;} }
 
-        public Timeline(XmlElement element)
+        public Timeline(XmlElement element, Animation animation)
             :base(element)
-        { }
+        {		
+			Parse (element, animation);
+		}
 
-        protected override void Parse(XmlElement element)
-        {
-            base.Parse(element);
-
+        protected virtual void Parse(XmlElement element, Animation animation)
+		{
+			Animation = animation;
             Name = element.GetString("name", "");
 
             ObjectType = ObjectType.Parse(element);
@@ -33,13 +35,18 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
             }
         }
 
+        public TimelineKey GetKey(int id)
+        {
+            return Keys.Where(key => key.Id == id).FirstOrDefault();
+        }
+
         private TimelineKey GetKey(XmlElement element)
         {
             //Check if key is sprite or bone
             var bone = element[BoneTimelineKey.XmlKey];
             if(bone != null)
             {
-                return new BoneTimelineKey(element);
+                return new BoneTimelineKey(element, this);
             }
             else
             {
@@ -49,7 +56,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
                     var objType = ObjectType.Parse(obj);
                     if (objType == ObjectType.Sprite)
                     {
-                        return new SpriteTimelineKey(element);
+                        return new SpriteTimelineKey(element, this);
                     }
                 }
             }

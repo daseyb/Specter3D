@@ -26,6 +26,28 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
             Parse(element);
         }
 
+        private SpatialInfo()
+        { }
+
+        public SpatialInfo Unmap(SpatialInfo parent)
+        {
+            if (parent == null)
+                return this;
+
+			var unmapped = new SpatialInfo();
+
+			unmapped.Position = new Vector2(
+				Position.x * parent.Scale.x,
+				Position.y * parent.Scale.y);
+			unmapped.Scale = new Vector2(
+				Scale.x * parent.Scale.x,
+				Scale.y * parent.Scale.y);
+            unmapped.Angle_Deg = Angle_Deg;
+            unmapped.Spin = Spin;
+
+            return unmapped;
+        }
+
         protected virtual void Parse(XmlElement element)
         {
             Vector2 position;
