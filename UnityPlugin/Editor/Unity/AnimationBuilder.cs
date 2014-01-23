@@ -16,7 +16,13 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             var animClip = new AnimationClip();
             animClip.name = animation.Name;
 
+            //Set clip to Generic type
+            UnityEditor.AnimationUtility.SetAnimationType(animClip, ModelImporterAnimationType.Generic);
+
+            //Populate the animation curves & events
             MakeAnimationCurves(animClip, animation);
+
+            //Save the animation
             AssetDatabase.CreateAsset(animClip, "Assets/TestAnim.anim");
             return animClip;
         }
@@ -39,6 +45,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
 
         private AnimationClip MakeAnimationCurves(AnimationClip animClip, Animation animation)
         {
+            var animEvents = new List<AnimationEvent>();
             var curveDict = new Dictionary<string, AnimationCurve[]>();
             //TODO: Once functional refactor into something more presentable
             var lastRelativePaths = new Dictionary<Timeline, string>(animation.Timelines.Count()); //Used to determine active/inactive toggle
@@ -50,15 +57,16 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
 
             AnimationCurve[] curves;
 
-            foreach(var timeline in animation.Timelines)
+            foreach (var timeline in animation.Timelines)
             {
                 lastRelativePaths[timeline] = null;
                 lastRefs[timeline] = null;
             }
 
-            foreach(var mainKey in animation.MainlineKeys)
+            foreach (var mainKey in animation.MainlineKeys)
             {
-                foreach(var r in mainKey.Refs)
+                bool firstFrame = mainKey.Time == 0;
+                foreach (var r in mainKey.Refs)
                 {
                     //If we're still on the same key for this timeline, don't bother adding another keyframe
                     if (lastRefs[r.Referenced.Timeline] == r.Referenced)
@@ -70,26 +78,37 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
                     string relativePath = r.RelativePath;
                     string lastRelativePath;
                     lastRelativePath = lastRelativePaths[r.Referenced.Timeline];
+
+                    //Retrieve or create curves array
+                    if (!curveDict.TryGetValue(relativePath, out curves))
+                    {
+                        curves = curveDict[relativePath] = CreateAnimationCurves();
+                        if(!firstFrame)
+                        {
+                            SetCurves(curves, 0, false, ref localPosition, ref localScale, ref localEulerAngles);
+                        }
+                    }
+
                     if (relativePath != lastRelativePath)
                     {
                         if (!string.IsNullOrEmpty(lastRelativePath))
                         {
-                            if (curveDict.TryGetValue(lastRelativePath, out curves))
+                            AnimationCurve[] lastCurves;
+                            if (curveDict.TryGetValue(lastRelativePath, out lastCurves))
                             {
+                                SetCurves(lastCurves, mainKey.Time, false, ref localPosition, ref localScale, ref localEulerAngles);
                                 //TODO: Get new global coords for position, inverse transform those back into old parent's local coords
-                                curves[(int)AnimationCurveIndex.IsActive].AddKey(GetActiveKeyframe(mainKey.Time, false)); //Disable old object
+                                //lastCurves[(int)AnimationCurveIndex.IsActive].AddKey(GetActiveKeyframe(mainKey.Time, false)); //Disable old object
                             }
                         }
-
-                        //Retrieve or create curves array
-                        if (!curveDict.TryGetValue(relativePath, out curves))
-                            curves = curveDict[relativePath] = CreateAnimationCurves();
                     }
-                    else
-                        curves = curveDict[relativePath];
 
                     //Set the curves for the current key
                     SetCurves(curves, mainKey.Time, true, ref localPosition, ref localScale, ref localEulerAngles);
+
+                    //Set the sprite for the current key
+                    //TODO: Only add an event if the sprite actually changes
+                    SetSpriteEvent(animClip, mainKey.Time, r, animEvents);
 
                     //Set our temp variables for next time
                     lastRelativePaths[r.Referenced.Timeline] = relativePath;
@@ -98,7 +117,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             }
 
             //Build AnimationClip
-            foreach(var curveData in curveDict)
+            foreach (var curveData in curveDict)
             {
                 //Position curves
                 animClip.SetCurve(curveData.Key, typeof(Transform), "localPosition.x", curveData.Value[(int)AnimationCurveIndex.LocalPositionX]);
@@ -109,7 +128,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
                 animClip.SetCurve(curveData.Key, typeof(Transform), "localRotation.x", curveData.Value[(int)AnimationCurveIndex.LocalRotationX]);
                 animClip.SetCurve(curveData.Key, typeof(Transform), "localRotation.y", curveData.Value[(int)AnimationCurveIndex.LocalRotationY]);
                 animClip.SetCurve(curveData.Key, typeof(Transform), "localRotation.z", curveData.Value[(int)AnimationCurveIndex.LocalRotationZ]);
-                animClip.SetCurve(curveData.Key, typeof(Transform), "localRotation.z", curveData.Value[(int)AnimationCurveIndex.LocalRotationW]);
+                animClip.SetCurve(curveData.Key, typeof(Transform), "localRotation.w", curveData.Value[(int)AnimationCurveIndex.LocalRotationW]);
 
                 //Scale curves
                 animClip.SetCurve(curveData.Key, typeof(Transform), "localScale.x", curveData.Value[(int)AnimationCurveIndex.LocalScaleX]);
@@ -117,9 +136,26 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
                 animClip.SetCurve(curveData.Key, typeof(Transform), "localScale.z", curveData.Value[(int)AnimationCurveIndex.LocalScaleZ]);
 
                 //IsActive curve
-                animClip.SetCurve(curveData.Key, typeof(Transform), "IsActive", curveData.Value[(int)AnimationCurveIndex.IsActive]);
+                animClip.SetCurve(curveData.Key, typeof(GameObject), "m_IsActive", curveData.Value[(int)AnimationCurveIndex.IsActive]);
             }
+
+            //Set animation clip events
+            UnityEditor.AnimationUtility.SetAnimationEvents(animClip, animEvents.ToArray());
             return null;
+        }
+
+        private void SetSpriteEvent(AnimationClip clip, float time, Ref reference, List<AnimationEvent> events)
+        {
+            var spriteKey = reference.Referenced as SpriteTimelineKey;
+            if (spriteKey != null)
+            {
+                string packedParam = string.Format("{0};{1};{2}",
+                    reference.RelativePath,
+                    spriteKey.File.Folder.Id,
+                    spriteKey.File.Id);
+                
+                events.Add(new AnimationEvent() { functionName = "ChangeSprite", stringParameter = packedParam });
+            }
         }
 
         private void SetCurves(AnimationCurve[] curves, float time, bool isActive, ref Vector3 localPosition, ref Vector3 localScale, ref Vector3 localEulerAngles)
@@ -128,24 +164,24 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             //TODO: Consider doing some key reduction
             //IsActive curve
             val = (isActive) ? 1.0f : 0.0f;
-            curves[(int)AnimationCurveIndex.IsActive].AddKey(new Keyframe(time, val, float.PositiveInfinity, float.PositiveInfinity));
+            curves[(int)AnimationCurveIndex.IsActive].AddKey(new Keyframe(time, val, float.PositiveInfinity, float.PositiveInfinity) { tangentMode = 0 });
 
             //Position curves
-            curves[(int)AnimationCurveIndex.LocalPositionX].AddKey(time, localPosition.x);
-            curves[(int)AnimationCurveIndex.LocalPositionY].AddKey(time, localPosition.y);
+            curves[(int)AnimationCurveIndex.LocalPositionX].AddKey(new Keyframe(time, localPosition.x) { tangentMode = 0 });
+            curves[(int)AnimationCurveIndex.LocalPositionY].AddKey(new Keyframe(time, localPosition.y) { tangentMode = 0 });
             curves[(int)AnimationCurveIndex.LocalPositionZ].AddKey(new Keyframe(time, localPosition.z, float.PositiveInfinity, float.PositiveInfinity));
 
             //Rotation curves
             var quat = Quaternion.Euler(localEulerAngles);
-            curves[(int)AnimationCurveIndex.LocalRotationX].AddKey(time, quat.x);
-            curves[(int)AnimationCurveIndex.LocalRotationY].AddKey(time, quat.y);
-            curves[(int)AnimationCurveIndex.LocalRotationZ].AddKey(time, quat.z);
-            curves[(int)AnimationCurveIndex.LocalRotationW].AddKey(time, quat.w);
+            curves[(int)AnimationCurveIndex.LocalRotationX].AddKey(new Keyframe(time, quat.x) { tangentMode = 0 });
+            curves[(int)AnimationCurveIndex.LocalRotationY].AddKey(new Keyframe(time, quat.y) { tangentMode = 0 });
+            curves[(int)AnimationCurveIndex.LocalRotationZ].AddKey(new Keyframe(time, quat.z) { tangentMode = 0 });
+            curves[(int)AnimationCurveIndex.LocalRotationW].AddKey(new Keyframe(time, quat.w) { tangentMode = 0 });
 
             //Scale curves
-            curves[(int)AnimationCurveIndex.LocalScaleX].AddKey(time, localScale.x);
-            curves[(int)AnimationCurveIndex.LocalScaleY].AddKey(time, localScale.y);
-            curves[(int)AnimationCurveIndex.LocalScaleZ].AddKey(time, localScale.z);
+            curves[(int)AnimationCurveIndex.LocalScaleX].AddKey(new Keyframe(time, localScale.x) { tangentMode = 0 });
+            curves[(int)AnimationCurveIndex.LocalScaleY].AddKey(new Keyframe(time, localScale.y) { tangentMode = 0 });
+            curves[(int)AnimationCurveIndex.LocalScaleZ].AddKey(new Keyframe(time, localScale.z) { tangentMode = 0 });
         }
 
         private Keyframe GetActiveKeyframe(float time, bool isActive)
