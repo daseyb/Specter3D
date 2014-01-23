@@ -14,13 +14,13 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
         public TimelineKey(XmlElement element, Timeline timeline)
             : base(element)
         {
-			Parse (element, timeline);
+            Parse(element, timeline);
         }
 
-		protected virtual void Parse(XmlElement element, Timeline timeline)
-		{
-			Timeline = timeline;
-				}
+        protected virtual void Parse(XmlElement element, Timeline timeline)
+        {
+            Timeline = timeline;
+        }
 
         protected override void Parse(System.Xml.XmlElement element)
         {

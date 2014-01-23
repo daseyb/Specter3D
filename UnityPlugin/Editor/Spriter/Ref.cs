@@ -12,6 +12,21 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
         protected SpatialInfo unmapped;
         public TimelineKey Referenced { get; private set; }
         public BoneRef Parent { get; private set; }
+        public string RelativePath
+        {
+            get
+            {
+                if(Parent == null)
+                {
+                    return Referenced.Timeline.Name;
+                }
+                else
+                {
+                    return Parent.RelativePath + "/" + Referenced.Timeline.Name;
+                }
+            }
+        }
+
         public SpatialInfo Unmapped
         {
             get

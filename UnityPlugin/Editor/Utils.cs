@@ -6,6 +6,51 @@ using Assets.ThirdParty.Spriter2Unity.Editor.Spriter;
 
 namespace Assets.ThirdParty.Spriter2Unity.Editor
 {
+    public static class PrefabUtils
+    {
+        public static float PixelScale = 0.01f;
+        public static float ZSpacing = 0.1f;
+
+        public static void BakeTransforms(Ref childRef, out Vector3 localPosition, out Vector3 localEulerAngles, out Vector3 localScale)
+        {
+            TimelineKey key = childRef.Referenced;
+
+            localPosition = Vector3.zero;
+            localScale = Vector3.one;
+            localEulerAngles = Vector3.zero;
+
+            var unmapped = childRef.Unmapped;
+            var spatial = childRef.Referenced as SpatialTimelineKey;
+            if (spatial != null)
+            {
+                localPosition = unmapped.Position;
+
+                var spriteKey = key as SpriteTimelineKey;
+                if (spriteKey != null)
+                {
+                    var sinA = Mathf.Sin(unmapped.Angle);
+                    var cosA = Mathf.Cos(unmapped.Angle);
+
+                    var pvt = spriteKey.File.GetPivotOffetFromMiddle();
+
+                    pvt.x *= unmapped.Scale.x;
+                    pvt.y *= unmapped.Scale.y;
+
+                    var rotPX = pvt.x * cosA - pvt.y * sinA;
+                    var rotPY = pvt.x * sinA + pvt.y * cosA;
+
+                    localPosition.x += rotPX;
+                    localPosition.y += rotPY;
+
+                    localScale.x = unmapped.Scale.x;
+                    localScale.y = unmapped.Scale.y;
+                    localPosition.z = ((ObjectRef)childRef).ZIndex * -ZSpacing;
+                }
+                localPosition *= PixelScale;
+                localEulerAngles = new Vector3(0, 0, unmapped.Angle_Deg);
+            }
+        }
+    }
     public static class XmlUtils
     {
         public static bool TryGetString(this XmlNode node, string key, out string value)

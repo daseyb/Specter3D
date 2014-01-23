@@ -30,6 +30,9 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor
             //TODO: Verify that all files/folders exist
             var pb = new PrefabBuilder();
             pb.MakePrefab(scml.Entities.FirstOrDefault());
+
+            var anim = new AnimationBuilder();
+            anim.MakeAnimationClip(scml.Entities.FirstOrDefault().Animations.FirstOrDefault());
         }
 
         private static void CheckFiles(string baseAssetPath, ScmlObject scml)

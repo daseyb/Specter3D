@@ -13,16 +13,19 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
 
     public class PrefabBuilder
     {
-        public float PixelScale = 0.01f;
-        public float ZSpacing = 0.1f;
+        private CharacterMap charMap;
 
         public GameObject MakePrefab(Entity entity)
         {
             GameObject root = new GameObject(entity.Name);
+            var mapBuilder = new CharacterMapBuilder();
+            charMap = mapBuilder.BuildMap(entity, root);
+
             foreach (var animation in entity.Animations)
             {
                 MakePrefab(animation, root);
             }
+            PrefabUtility.CreatePrefab("Assets/Prefabs/TestPrefab.prefab", root);
             return root;
         }
 
@@ -41,7 +44,8 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
         }
         private void MakePrefab(MainlineKey mainKey, GameObject root)
         {
-            Stack<RefParentInfo> toProcess = new Stack<RefParentInfo>(mainKey.GetChildren(null).Select(child => new RefParentInfo{Ref = child, Root = root}));
+            var rootInfo = mainKey.GetChildren(null).Select(child => new RefParentInfo { Ref = child, Root = root });
+            Stack<RefParentInfo> toProcess = new Stack<RefParentInfo>(rootInfo);
             while(toProcess.Count > 0)
             {
                 var next = toProcess.Pop();
@@ -84,53 +88,29 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
                 go.SetActive(false);
             }
 
-            var unmapped = childRef.Unmapped;
-            var spatial = childRef.Referenced as SpatialTimelineKey;
-            if(spatial != null)
+            var spriteKey = key as SpriteTimelineKey;
+            if (spriteKey != null)
             {
-                Vector3 localPosition = unmapped.Position;
-
-                Vector3 localScale = Vector3.one;
-
-                var spriteKey = key as SpriteTimelineKey;
-                if (spriteKey != null)
-                {
-                    //Set sprite information
-                    var sprite = go.AddComponent<SpriteRenderer>();
-                    sprite.sprite = spriteKey.File.GetSprite();
-
-                    var sinA = Mathf.Sin(unmapped.Angle);
-                    var cosA = Mathf.Cos(unmapped.Angle);
-
-                    var pvt = spriteKey.File.GetPivotOffetFromMiddle();
-
-                    pvt.x *= unmapped.Scale.x;
-                    pvt.y *= unmapped.Scale.y;
-
-                    var rotPX = pvt.x * cosA - pvt.y * sinA;
-                    var rotPY = pvt.x * sinA + pvt.y * cosA;
-
-                    localPosition.x += rotPX;
-                    localPosition.y += rotPY;
-
-                    localScale.x = unmapped.Scale.x;
-                    localScale.y = unmapped.Scale.y;
-                    localPosition.z = ((ObjectRef)childRef).ZIndex * -ZSpacing;                    
-                }
-                localPosition *= PixelScale;
-                go.transform.localPosition = localPosition;
-                go.transform.localEulerAngles = new Vector3(0, 0, unmapped.Angle_Deg);
-                go.transform.localScale = localScale;
+                //Set initial sprite information
+                var sprite = go.AddComponent<SpriteRenderer>();
+                sprite.sprite = charMap.GetSprite(spriteKey.File.Folder.Id, spriteKey.File.Id);
             }
+
+            SetTransform(childRef, go.transform);
 
             return go;
         }
 
-        public AnimationClip MakeAnimationClip(Animation animation)
+        private void SetTransform(Ref childRef, Transform transform)
         {
-            var animClip = new AnimationClip();
-            animClip.name = animation.Name;
-            return null;
+            Vector3 localPosition;
+            Vector3 localScale;
+			Vector3 localEulerAngles;
+
+            PrefabUtils.BakeTransforms(childRef, out localPosition, out localEulerAngles, out localScale);
+            transform.localPosition = localPosition;
+            transform.localScale = localScale;
+			transform.localEulerAngles = localEulerAngles;
         }
     }
 }
