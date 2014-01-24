@@ -25,7 +25,6 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             {
                 MakePrefab(animation, root);
             }
-            PrefabUtility.CreatePrefab("Assets/Prefabs/TestPrefab.prefab", root);
             return root;
         }
 

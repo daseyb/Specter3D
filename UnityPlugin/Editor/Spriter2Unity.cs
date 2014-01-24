@@ -7,6 +7,7 @@ using System.Text;
 using System.Xml;
 using Assets.ThirdParty.Spriter2Unity.Editor.Spriter;
 using Assets.ThirdParty.Spriter2Unity.Editor.Unity;
+using System.IO;
 
 namespace Assets.ThirdParty.Spriter2Unity.Editor
 {
@@ -15,24 +16,33 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor
         [MenuItem("My Menu/Test SCML Import")]
         public static void TestImport()
         {
-            const string scmlPath = "C:/Users/andre_000/Documents/Spriter/BasicPlatfortmerPack_Essentials/PlatformerPack/playerTest.scml";
-            ImportScml("", scmlPath);
+            const string scmlPath = "C:/Users/andre_000/Documents/Spriter/BasicPlatfortmerPack_Essentials/PlatformerPack/player.scml";
+            ImportScml("Assets/", scmlPath);
+            AssetDatabase.SaveAssets();
         }
 
-        public static void ImportScml(string baseAssetPath, string scmlFilePath)
+        public static void ImportScml(string folderPath, string scmlFilePath)
         {
             var doc = new XmlDocument();
             doc.Load(scmlFilePath);
 
             //Parse the SCML file
-            var scml = new ScmlObject(doc);
+            var scml = new Spriter.ScmlObject(doc);
 
             //TODO: Verify that all files/folders exist
             var pb = new PrefabBuilder();
-            pb.MakePrefab(scml.Entities.FirstOrDefault());
+            foreach (var entity in scml.Entities)
+            {
+                var go = pb.MakePrefab(entity);
 
-            var anim = new AnimationBuilder();
-            anim.MakeAnimationClip(scml.Entities.FirstOrDefault().Animations.FirstOrDefault());
+                var prefabPath = Path.Combine(folderPath, go.name + ".prefab");
+                //Change to forward slash for asset database friendliness
+                prefabPath = prefabPath.Replace('\\', '/');
+                PrefabUtility.CreatePrefab(prefabPath, go);
+
+                var anim = new AnimationBuilder();
+                anim.BuildAnimationClips(go, entity, prefabPath);
+            }
         }
 
         private static void CheckFiles(string baseAssetPath, ScmlObject scml)

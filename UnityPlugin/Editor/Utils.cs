@@ -11,7 +11,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor
         public static float PixelScale = 0.01f;
         public static float ZSpacing = 0.1f;
 
-        public static void BakeTransforms(Ref childRef, out Vector3 localPosition, out Vector3 localEulerAngles, out Vector3 localScale)
+        public static void BakeTransforms(this Ref childRef, out Vector3 localPosition, out Vector3 localEulerAngles, out Vector3 localScale)
         {
             TimelineKey key = childRef.Referenced;
 
@@ -171,4 +171,29 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor
             return value;
         }
 	}
+    public static class AnimationCurveUtils
+    {
+        public static void AddKeyIfChanged(this AnimationCurve curve, Keyframe keyframe)
+        {
+            var keys = curve.keys;
+            //If this is the first key on this curve, always add
+            if (keys.Length == 0)
+                curve.AddKey(keyframe);
+            else
+            {
+                //Find the last keyframe before the one we're trying to add - usually the last one
+                Keyframe lastKey = keys[keys.Length - 1];
+                for (int i = keys.Length - 1; i >= 0; i--)
+                {
+                    lastKey = keys[i];
+                    if (lastKey.time < keyframe.time)
+                        break;
+                }
+
+                //If the value is different from the last keyframe, add it
+                if (lastKey.value != keyframe.value)
+                    curve.AddKey(keyframe);
+            }
+        }
+    }
 }
