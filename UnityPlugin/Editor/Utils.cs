@@ -191,7 +191,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor
                 //Find the last keyframe
                 Keyframe lastKey = keys[keys.Length - 1];
                 if (lastKey.time >= keyframe.time)
-                    Debug.Log("Keyframes not supplied in consecutive order!!!");
+                    Debug.LogError("Keyframes not supplied in consecutive order!!!");
 
                 //Grab 2 frames ago
                 var last2Key = keys[keys.Length - 2];

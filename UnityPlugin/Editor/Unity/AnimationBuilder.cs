@@ -20,7 +20,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             foreach(var animation in entity.Animations)
             {
                 var animClip = MakeAnimationClip(root, animation);
-                Debug.Log(string.Format("Added animClip({0}) to asset path ({1})", animClip.name, scmlAssetPath));
+                //Debug.Log(string.Format("Added animClip({0}) to asset path ({1})", animClip.name, scmlAssetPath));
                 AssetDatabase.AddObjectToAsset(animClip, scmlAssetPath);
             }
         }
@@ -56,7 +56,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             
             foreach(var mainlineKey in animation.MainlineKeys)
             {
-                Debug.Log(string.Format("Starting MainlineKey for {0} at {1} seconds", animation.Name, mainlineKey.Time));
+                //Debug.Log(string.Format("Starting MainlineKey for {0} at {1} seconds", animation.Name, mainlineKey.Time));
                 SetGameObjectForKey(root, animClip, mainlineKey);
                 
                 //Take a snapshot for our animation
@@ -93,7 +93,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             var transform = root.transform.Find(relativePath);
             if (transform == null)
             {
-                Debug.Log("ERROR: Unable to find GameObject at relative path " + relativePath);
+                Debug.LogError("ERROR: Unable to find GameObject at relative path " + relativePath);
                 return;
             }
 

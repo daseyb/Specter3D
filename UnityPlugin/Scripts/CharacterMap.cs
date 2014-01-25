@@ -47,7 +47,7 @@ public class CharacterMap : MonoBehaviour
 
         var target = transform.Find(relativePath);
         if (target == null)
-            Debug.Log("Unable to find relative childe --   " + relativePath);
+            Debug.Log("Unable to find relative child --   " + relativePath);
         else
         {
             var spriteRenderer = target.GetComponent<SpriteRenderer>();

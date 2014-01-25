@@ -49,7 +49,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
             }
             else
             {
-                Debug.Log("Non-Spatial Ref type!!");
+                Debug.LogError("Non-Spatial Ref type!!");
             }
 
             if (Parent != null)
@@ -85,7 +85,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
             var timelineObj = animation.GetTimeline(timeline);
             if (timelineObj == null)
             {
-                Debug.Log(String.Format(
+                Debug.LogError(String.Format(
                     System.Globalization.CultureInfo.InvariantCulture,
                     "Unable to find timeline {0} in animation {1}",
                     timeline,

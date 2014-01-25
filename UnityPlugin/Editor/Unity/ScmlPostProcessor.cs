@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using UnityEditor;
+using UnityEngine;
 
 namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
 {
@@ -44,10 +45,15 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
                 var prefabPath = Path.Combine(folderPath, go.name + ".prefab");
                 //Change to forward slash for asset database friendliness
                 prefabPath = prefabPath.Replace('\\', '/');
+
+                //Create prefab and destroy the object in scene
                 PrefabUtility.CreatePrefab(prefabPath, go);
 
+                //Add animations to prefab object
                 var anim = new AnimationBuilder();
                 anim.BuildAnimationClips(go, entity, prefabPath);
+
+                GameObject.DestroyImmediate(go);
             }
         }
     }

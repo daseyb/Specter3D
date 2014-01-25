@@ -13,7 +13,6 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
 
         public void AddCurves(AnimationClip animClip)
         {
-            Debug.Log(string.Format("curveCache length:{0}", curveCache.Count));
             foreach(var kvp in curveCache)
             {
                 //Position curves
