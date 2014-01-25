@@ -40,6 +40,9 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             //Populate the animation curves & events
             MakeAnimationCurves(root, animClip, animation);
 
+            //Add events to the clip
+            AnimationUtility.SetAnimationEvents(animClip, animationEvents.ToArray());
+                        
             return animClip;
         }
 
@@ -49,6 +52,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
 
             //Set all gameobjects to inactive in first frame
             SetActiveRecursive(root.transform, false);
+            root.SetActive(true);
             
             foreach(var mainlineKey in animation.MainlineKeys)
             {
@@ -144,6 +148,8 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
         /// <param name="reference"></param>
         private void SetSpriteEvent(AnimationClip clip, float time, Ref reference)
         {
+            //Bump any events at t=0 up slightly
+            if (time < float.Epsilon) time = 0.001f;
             var spriteKey = reference.Referenced as SpriteTimelineKey;
             //Only add event for SpriteTimelineKey objects
             if (spriteKey != null)
@@ -154,8 +160,10 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
                     spriteKey.File.Folder.Id,
                     spriteKey.File.Id);
 
+                //Debug.Log(string.Format("Adding event: ChangeSprite(\"{0}\") at t={1}", packedParam, time));
+
                 //Add events to a list - Unity forces us to set the entire array at once
-                animationEvents.Add(new AnimationEvent() { functionName = "ChangeSprite", stringParameter = packedParam });
+                animationEvents.Add(new AnimationEvent() { functionName = "ChangeSprite", stringParameter = packedParam, time = time});
             }
         }
     }

@@ -19,7 +19,8 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             var charMap = root.AddComponent<CharacterMap>();
             foreach(var file in files)
             {
-                charMap.SetSprite(file.Folder.Id, file.Id, file.GetSprite());
+                var fileMap = new FileMap { FilePath = file.Name, Sprite = file.GetSprite() };
+                charMap.SetFile(file.Folder.Id, file.Id, fileMap);
             }
             return charMap;
         }

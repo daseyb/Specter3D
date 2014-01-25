@@ -177,22 +177,35 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor
         {
             var keys = curve.keys;
             //If this is the first key on this curve, always add
+            //NOTE: Add TWO copies of the first frame, then we adjust the last frame as we move along
+            //This guarantees a minimum of two keys in each curve
             if (keys.Length == 0)
+            {
                 curve.AddKey(keyframe);
+                keyframe.time += float.Epsilon;
+                curve.AddKey(keyframe);
+            }
             else
             {
-                //Find the last keyframe before the one we're trying to add - usually the last one
+                //TODO: This method of keyframe reduction causes artifacts in animations that are supposed to deliberately pause
+                //Find the last keyframe
                 Keyframe lastKey = keys[keys.Length - 1];
-                for (int i = keys.Length - 1; i >= 0; i--)
-                {
-                    lastKey = keys[i];
-                    if (lastKey.time < keyframe.time)
-                        break;
-                }
+                if (lastKey.time >= keyframe.time)
+                    Debug.Log("Keyframes not supplied in consecutive order!!!");
 
-                //If the value is different from the last keyframe, add it
-                if (lastKey.value != keyframe.value)
+                //Grab 2 frames ago
+                var last2Key = keys[keys.Length - 2];
+
+                //If the previous 2 frames were different, add a new frame
+                if (lastKey.value != last2Key.value)
+                {
                     curve.AddKey(keyframe);
+                }
+                //The previous frame is redundant - just move it
+                else
+                {
+                    curve.MoveKey(keys.Length - 1, keyframe);
+                }
             }
         }
     }
