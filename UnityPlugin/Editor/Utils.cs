@@ -25,6 +25,7 @@ using System.Collections;
 using System.Xml;
 using UnityEditor;
 using Assets.ThirdParty.Spriter2Unity.Editor.Spriter;
+using System.Reflection;
 
 namespace Assets.ThirdParty.Spriter2Unity.Editor
 {
@@ -229,6 +230,22 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor
                     curve.MoveKey(keys.Length - 1, keyframe);
                 }
             }
+        }
+
+        /* Method Signature:        
+        [MethodImpl(MethodImplOptions.InternalCall), WrapperlessIcall]
+        internal static extern void SetAnimationClipSettings(AnimationClip clip, AnimationClipSettings srcClipInfo);
+         */
+        /// <summary>
+        /// Uses reflection to call the internal (seriously, guys?!) SetAnimationClipSettings method
+        /// Especially funny because the method doesn't even appear to be USED internally...
+        /// </summary>
+        public static void SetAnimationSettings(this AnimationClip animClip, AnimationClipSettings settings)
+        {
+            //Use reflection to get the internal method
+            BindingFlags bindingFlags = BindingFlags.Static | BindingFlags.NonPublic;
+            MethodInfo mInfo = typeof(AnimationUtility).GetMethod("SetAnimationClipSettings", bindingFlags);
+            mInfo.Invoke(null, new object[] { animClip, settings });
         }
     }
 }

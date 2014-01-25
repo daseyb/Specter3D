@@ -28,15 +28,16 @@ using System.Xml;
 
 namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
 {
-    public class LoopType
+    public enum LoopType
     {
-        public string Name { get; private set; }
+        INVALID,
+        True,
+        False,
+        PingPong,
+    }
 
-        public static readonly LoopType INVALID = new LoopType() { Name = "INVALID" };
-        public static readonly LoopType True = new LoopType() { Name = "true" };
-        public static readonly LoopType False = new LoopType() { Name = "false" };
-        public static readonly LoopType PingPong = new LoopType() { Name = "ping_pong" };
-
+    public static class LoopTypeUtils
+    {
         public static LoopType Parse(XmlElement element)
         {
             var looping = element.GetString("looping", "true");
@@ -83,7 +84,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
 
             Name = element.GetString("name", "");
             Length_Ms = element.GetInt("length", -1);
-            LoopType = LoopType.Parse(element);
+            LoopType = LoopTypeUtils.Parse(element);
             LoopTo = element.GetInt("loop_to", 0);
 
             LoadTimelines(element);

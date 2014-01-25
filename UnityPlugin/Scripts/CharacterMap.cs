@@ -44,7 +44,7 @@ public class CharacterMap : MonoBehaviour
     {
         //Debug.Log(string.Format("Setting Folder:{0} File:{1} to FileMap:'{2}'", folderId, fileId, fileMap));
         int newFolders = folderId - Folders.Count + 1;
-        if (newFolders > 0) Debug.Log("Adding " + newFolders.ToString() + " folders");
+        //if (newFolders > 0) Debug.Log("Adding " + newFolders.ToString() + " folders");
         for (int i = 0; i < newFolders; i++)
         {
             Folders.Add(new FolderMap());

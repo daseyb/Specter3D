@@ -39,10 +39,11 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
 
         public void BuildAnimationClips(GameObject root, Entity entity, string scmlAssetPath)
         {
-            foreach(var animation in entity.Animations)
+            foreach (var animation in entity.Animations)
             {
                 var animClip = MakeAnimationClip(root, animation);
-                //Debug.Log(string.Format("Added animClip({0}) to asset path ({1})", animClip.name, scmlAssetPath));
+                //Debug.Log(string.Format("Added animClip({0}) to asset path ({1}) WrapMode:{2}", animClip.name, scmlAssetPath, animClip.wrapMode));
+
                 AssetDatabase.AddObjectToAsset(animClip, scmlAssetPath);
             }
         }
@@ -64,7 +65,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
 
             //Add events to the clip
             AnimationUtility.SetAnimationEvents(animClip, animationEvents.ToArray());
-                        
+
             return animClip;
         }
 
@@ -75,18 +76,44 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             //Set all gameobjects to inactive in first frame
             SetActiveRecursive(root.transform, false);
             root.SetActive(true);
-            
-            foreach(var mainlineKey in animation.MainlineKeys)
+
+            foreach (var mainlineKey in animation.MainlineKeys)
             {
                 //Debug.Log(string.Format("Starting MainlineKey for {0} at {1} seconds", animation.Name, mainlineKey.Time));
                 SetGameObjectForKey(root, animClip, mainlineKey);
-                
+
                 //Take a snapshot for our animation
                 //AnimationMode.SampleAnimationClip(root, animClip, mainlineKey.Time);
                 acb.SetCurveRecursive(root.transform, mainlineKey.Time);
             }
 
+            //Duplicate the last key at the end time of the animation
+            acb.SetCurveRecursive(root.transform, animation.Length);
+
+            //Add the curves to our animation clip
             acb.AddCurves(animClip);
+
+            //Set the loop/wrap settings for the animation clip
+            var animSettings = AnimationUtility.GetAnimationClipSettings(animClip);
+            switch (animation.LoopType)
+            {
+                case LoopType.True:
+                    animClip.wrapMode = WrapMode.Loop;
+                    animSettings.loopTime = true;
+                    break;
+                case LoopType.False:
+                    animClip.wrapMode = WrapMode.ClampForever;
+                    break;
+                case LoopType.PingPong:
+                    animClip.wrapMode = WrapMode.PingPong;
+                    animSettings.loopTime = true;
+                    break;
+                default:
+                    animClip.wrapMode = WrapMode.Once;
+                    break;
+            }
+            animClip.SetAnimationSettings(animSettings);
+            //Debug.Log(string.Format("Setting animation {0} to {1} loop mode (WrapMode:{2}  LoopTime:{3}) ", animClip.name, animation.LoopType, animClip.wrapMode, animSettings.loopTime));
         }
 
         private void SetGameObjectForKey(GameObject root, AnimationClip animClip, MainlineKey mainlineKey)
@@ -94,7 +121,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             //Could do this recursively - this is easier
             Stack<Ref> toProcess = new Stack<Ref>(mainlineKey.GetChildren(null));
 
-            while(toProcess.Count > 0)
+            while (toProcess.Count > 0)
             {
                 var next = toProcess.Pop();
 
@@ -121,7 +148,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
 
             var gameObject = transform.gameObject;
             gameObject.SetActive(true);
-            
+
             //Get transform data from ref
             Vector3 localPosition;
             Vector3 localScale;
@@ -144,7 +171,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
 
                 //TODO: Also need to do something about scale - this is a little more tricky
                 lastGameObject.transform.localScale = localScale;
-                
+
                 //Deactivate the old object
                 lastGameObject.SetActive(false);
             }
@@ -155,7 +182,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
         /// </summary>
         private void SetActiveRecursive(Transform root, bool isActive)
         {
-            foreach(Transform child in root.transform)
+            foreach (Transform child in root.transform)
             {
                 SetActiveRecursive(child, isActive);
             }
@@ -185,7 +212,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
                 //Debug.Log(string.Format("Adding event: ChangeSprite(\"{0}\") at t={1}", packedParam, time));
 
                 //Add events to a list - Unity forces us to set the entire array at once
-                animationEvents.Add(new AnimationEvent() { functionName = "ChangeSprite", stringParameter = packedParam, time = time});
+                animationEvents.Add(new AnimationEvent() { functionName = "ChangeSprite", stringParameter = packedParam, time = time });
             }
         }
     }
