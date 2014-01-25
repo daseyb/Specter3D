@@ -62,18 +62,31 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             var pb = new PrefabBuilder();
             foreach (var entity in scml.Entities)
             {
-                var go = pb.MakePrefab(entity);
+                //TODO: Settings file to customize prefab location
+                var prefabPath = Path.Combine(folderPath, entity.Name + ".prefab");
 
-                var prefabPath = Path.Combine(folderPath, go.name + ".prefab");
+                GameObject go;
+                //Update prefab if it exists, otherwise create a new one
+                go = AssetDatabase.LoadAssetAtPath(prefabPath, typeof(GameObject)) as GameObject;
+                if (go == null)
+                    go = PrefabUtility.CreateEmptyPrefab(prefabPath) as GameObject;
+
+                //Build the prefab based on the supplied entity
+                pb.MakePrefab(entity, go);
+
                 //Change to forward slash for asset database friendliness
                 prefabPath = prefabPath.Replace('\\', '/');
-
-                //Create prefab and destroy the object in scene
-                PrefabUtility.CreatePrefab(prefabPath, go);
 
                 //Add animations to prefab object
                 var anim = new AnimationBuilder();
                 anim.BuildAnimationClips(go, entity, prefabPath);
+
+                //Add a generic avatar - because why not?
+                //TODO: May need to eventually break this into a separate class
+                //  ie: if we want to look for a root motion node by naming convention
+                var avatar = AvatarBuilder.BuildGenericAvatar(go, "");
+                avatar.name = go.name;
+                AssetDatabase.AddObjectToAsset(avatar, prefabPath);
 
                 GameObject.DestroyImmediate(go);
             }

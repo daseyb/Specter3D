@@ -37,12 +37,22 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
     {
         private CharacterMap charMap;
 
-        public GameObject MakePrefab(Entity entity)
+        public GameObject MakePrefab(Entity entity, GameObject root)
         {
-            GameObject root = new GameObject(entity.Name);
+            //Clean sweep in case we're reusing an existing prefab
+            foreach(Transform child in root.transform)
+            {
+                GameObject.DestroyImmediate(child.gameObject);
+            }
+
+            //Set the name (in case it changed)
+            root.name = entity.Name;
+
+            //Build the character map first
             var mapBuilder = new CharacterMapBuilder();
             charMap = mapBuilder.BuildMap(entity, root);
 
+            //Build the GameObject hierarchy
             foreach (var animation in entity.Animations)
             {
                 MakePrefab(animation, root);

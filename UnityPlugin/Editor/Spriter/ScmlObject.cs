@@ -50,9 +50,9 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
 
             string pixelArt = element.GetString("pixel_art_mode", "false");
             PixelArtMode = pixelArt == "true";
-            
-			LoadFolders (element);
-			LoadEntities (element);
+
+            LoadFolders(element);
+            LoadEntities(element);
         }
 
         private void LoadFolders(XmlElement element)
@@ -73,10 +73,10 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
             }
         }
 
-		public Folder GetFolder(int id)
-		{
-			return folders.Where (folder => folder.Id == id).FirstOrDefault ();
-				}
+        public Folder GetFolder(int id)
+        {
+            return folders.Where(folder => folder.Id == id).FirstOrDefault();
+        }
 
         private List<Folder> folders = new List<Folder>();
         private List<Entity> entities = new List<Entity>();
