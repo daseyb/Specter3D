@@ -31,6 +31,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
 {
     public class Ref : KeyElem
     {
+        public MainlineKey MainlineKey { get; private set; }
         protected SpatialInfo unmapped;
         public TimelineKey Referenced { get; private set; }
         public BoneRef Parent { get; private set; }
@@ -85,6 +86,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
         public Ref(XmlElement element, Animation animation, MainlineKey parentKey)
             :base(element)
         {
+            MainlineKey = parentKey;
             Parse(element, animation, parentKey);
         }
 

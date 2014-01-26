@@ -42,7 +42,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             //Clean sweep in case we're reusing an existing prefab
             foreach(Transform child in root.transform)
             {
-                GameObject.DestroyImmediate(child.gameObject);
+                GameObject.DestroyImmediate(child.gameObject, true);
             }
 
             //Set the name (in case it changed)
@@ -73,6 +73,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             public Ref Ref;
             public GameObject Root;
         }
+
         private void MakePrefab(MainlineKey mainKey, GameObject root)
         {
             var rootInfo = mainKey.GetChildren(null).Select(child => new RefParentInfo { Ref = child, Root = root });

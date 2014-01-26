@@ -34,8 +34,10 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
     public class AnimationBuilder
     {
         Dictionary<Timeline, GameObject> lastGameObjectCache = new Dictionary<Timeline, GameObject>(); //Used to determine active/inactive toggle
+        Dictionary<Timeline, TimelineKey> lastKeyframeCache = new Dictionary<Timeline, TimelineKey>();
 
         List<AnimationEvent> animationEvents = new List<AnimationEvent>();
+        AnimationCurveBuilder acb;
 
         public void BuildAnimationClips(GameObject root, Entity entity, string scmlAssetPath)
         {
@@ -53,6 +55,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             //Clear local caches
             lastGameObjectCache.Clear();
             animationEvents.Clear();
+            lastKeyframeCache.Clear();
 
             var animClip = new AnimationClip();
             animClip.name = animation.Name;
@@ -71,7 +74,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
 
         private void MakeAnimationCurves(GameObject root, AnimationClip animClip, Animation animation)
         {
-            var acb = new AnimationCurveBuilder();
+            acb = new AnimationCurveBuilder();
 
             //Set all gameobjects to inactive in first frame
             SetActiveRecursive(root.transform, false);
@@ -84,7 +87,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
 
                 //Take a snapshot for our animation
                 //AnimationMode.SampleAnimationClip(root, animClip, mainlineKey.Time);
-                acb.SetCurveRecursive(root.transform, mainlineKey.Time);
+                //acb.SetCurveRecursive(root.transform, mainlineKey.Time);
             }
 
             //Duplicate the last key at the end time of the animation
@@ -137,6 +140,13 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
         {
             TimelineKey key = childRef.Referenced;
 
+            TimelineKey lastKey;
+            if (lastKeyframeCache.TryGetValue(key.Timeline, out lastKey) && key == lastKey)
+            {
+                return;
+            }
+            lastKeyframeCache[key.Timeline] = key;
+
             //Get the relative path based on the current hierarchy, find the target GameObject
             var relativePath = childRef.RelativePath;
             var transform = root.transform.Find(relativePath);
@@ -159,7 +169,14 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             //Set the current GameObject's transform data
             transform.localPosition = localPosition;
             transform.localScale = localScale;
+
+            //Spriter limits rotation between keyframes to 180 degrees (ie: 5 degrees to 350 degrees is a -15 degree rotation, NOT a 345 degree one)
+            var oldEulerAngles = transform.localEulerAngles;
+            if (oldEulerAngles.z - localEulerAngles.z > 180) localEulerAngles.z += 360;
+            else if (localEulerAngles.z - oldEulerAngles.z > 180) localEulerAngles.z -= 360;
             transform.localEulerAngles = localEulerAngles;
+
+            acb.SetCurve(root.transform, transform, key.Time);
 
             //Get last-used game object for this Timeline - needed to clean up reparenting
             GameObject lastGameObject;
@@ -174,6 +191,8 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
 
                 //Deactivate the old object
                 lastGameObject.SetActive(false);
+
+                acb.SetCurve(root.transform, lastGameObject.transform, key.Time);
             }
         }
 

@@ -65,17 +65,16 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
                 //TODO: Settings file to customize prefab location
                 var prefabPath = Path.Combine(folderPath, entity.Name + ".prefab");
 
-                GameObject go;
-                //Update prefab if it exists, otherwise create a new one
-                go = AssetDatabase.LoadAssetAtPath(prefabPath, typeof(GameObject)) as GameObject;
-                if (go == null)
-                    go = PrefabUtility.CreateEmptyPrefab(prefabPath) as GameObject;
+                //Change to forward slash for asset database friendliness
+                prefabPath = prefabPath.Replace('\\', '/');
+
+                GameObject go = new GameObject();
 
                 //Build the prefab based on the supplied entity
                 pb.MakePrefab(entity, go);
 
-                //Change to forward slash for asset database friendliness
-                prefabPath = prefabPath.Replace('\\', '/');
+                //Update prefab if it exists, otherwise create a new one
+                PrefabUtility.CreatePrefab(prefabPath, go, ReplacePrefabOptions.ConnectToPrefab);
 
                 //Add animations to prefab object
                 var anim = new AnimationBuilder();

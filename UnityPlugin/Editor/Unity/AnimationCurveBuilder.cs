@@ -87,21 +87,21 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             curves[(int)AnimationCurveIndex.IsActive].AddKey(new Keyframe(time, val, float.PositiveInfinity, float.PositiveInfinity) { tangentMode = 0 });
 
             //Position curves
-            curves[(int)AnimationCurveIndex.LocalPositionX].AddKey(new Keyframe(time, current.localPosition.x) { tangentMode = 0 });
-            curves[(int)AnimationCurveIndex.LocalPositionY].AddKey(new Keyframe(time, current.localPosition.y) { tangentMode = 0 });
-            curves[(int)AnimationCurveIndex.LocalPositionZ].AddKey(new Keyframe(time, current.localPosition.z, float.PositiveInfinity, float.PositiveInfinity));
+            curves[(int)AnimationCurveIndex.LocalPositionX].AddLinearKey(new Keyframe(time, current.localPosition.x) { tangentMode = 0 });
+            curves[(int)AnimationCurveIndex.LocalPositionY].AddLinearKey(new Keyframe(time, current.localPosition.y) { tangentMode = 0 });
+            curves[(int)AnimationCurveIndex.LocalPositionZ].AddLinearKey(new Keyframe(time, current.localPosition.z, float.PositiveInfinity, float.PositiveInfinity));
 
             //Rotation curves
             var quat = Quaternion.Euler(current.localEulerAngles);
-            curves[(int)AnimationCurveIndex.LocalRotationX].AddKey(new Keyframe(time, quat.x) { tangentMode = 0 });
-            curves[(int)AnimationCurveIndex.LocalRotationY].AddKey(new Keyframe(time, quat.y) { tangentMode = 0 });
-            curves[(int)AnimationCurveIndex.LocalRotationZ].AddKey(new Keyframe(time, quat.z) { tangentMode = 0 });
-            curves[(int)AnimationCurveIndex.LocalRotationW].AddKey(new Keyframe(time, quat.w) { tangentMode = 0 });
+            curves[(int)AnimationCurveIndex.LocalRotationX].AddLinearKey(new Keyframe(time, quat.x) { tangentMode = 0 });
+            curves[(int)AnimationCurveIndex.LocalRotationY].AddLinearKey(new Keyframe(time, quat.y) { tangentMode = 0 });
+            curves[(int)AnimationCurveIndex.LocalRotationZ].AddLinearKey(new Keyframe(time, quat.z) { tangentMode = 0 });
+            curves[(int)AnimationCurveIndex.LocalRotationW].AddLinearKey(new Keyframe(time, quat.w) { tangentMode = 0 });
 
             //Scale curves
-            curves[(int)AnimationCurveIndex.LocalScaleX].AddKey(new Keyframe(time, current.localScale.x) { tangentMode = 0 });
-            curves[(int)AnimationCurveIndex.LocalScaleY].AddKey(new Keyframe(time, current.localScale.y) { tangentMode = 0 });
-            curves[(int)AnimationCurveIndex.LocalScaleZ].AddKey(new Keyframe(time, current.localScale.z) { tangentMode = 0 });
+            curves[(int)AnimationCurveIndex.LocalScaleX].AddLinearKey(new Keyframe(time, current.localScale.x) { tangentMode = 0 });
+            curves[(int)AnimationCurveIndex.LocalScaleY].AddLinearKey(new Keyframe(time, current.localScale.y) { tangentMode = 0 });
+            curves[(int)AnimationCurveIndex.LocalScaleZ].AddLinearKey(new Keyframe(time, current.localScale.z) { tangentMode = 0 });
         }
 
         private AnimationCurve[] GetOrCreateAnimationCurves(string path)

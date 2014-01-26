@@ -36,6 +36,19 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
         public File File { get; private set; }
         public Vector2 Pivot { get; private set; }
         public Color Tint { get; private set; }
+        
+        public Vector2 GetPivotOffetFromMiddle()
+        {
+            var mid = File.Size / 2;
+            var pvt = new Vector2(
+                File.Size.x * Pivot.x,
+                File.Size.y * Pivot.y);
+
+            var retVal = mid - pvt;
+            var oldVal = File.GetPivotOffetFromMiddle();
+            if (retVal != oldVal) Debug.Log(string.Format("Different offset values - File:({0})  Key:({1}) in animation {2}, sprite {3}, time {4}\nKey--  Pivot({5})\nFile-- Pivot({6})", oldVal, retVal, Timeline.Animation.Name, File.Name, Time, Pivot, File.Pivot));
+            return retVal;
+        }
 
         public SpriteTimelineKey(XmlElement element, Timeline timeline)
             : base(element, timeline)
@@ -52,8 +65,9 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
             Spatial = new SpatialInfo(objElement);
 
             Vector2 pivot;
-            pivot.x = objElement.GetFloat("pivot_x", 0);
-            pivot.y = objElement.GetFloat("pivot_y", 0);
+            pivot.x = objElement.GetFloat("pivot_x", File.Pivot.x);
+            pivot.y = objElement.GetFloat("pivot_y", File.Pivot.y);
+            Pivot = pivot;
 
             Color tint = Color.white;
             tint.r = objElement.GetFloat("r", 1.0f);

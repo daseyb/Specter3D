@@ -39,18 +39,18 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
             :base(element, timeline)
         {        }
 
-        protected override void Parse(XmlElement element)
+        protected override void Parse(XmlElement element, Timeline timeline)
         {
-            base.Parse(element);
+            base.Parse(element, timeline);
 
-			var boneElem = element ["bone"];
-			Spatial = new SpatialInfo(boneElem);
+            var boneElem = element["bone"];
+            Spatial = new SpatialInfo(boneElem);
 
             Color tint = Color.white;
-			tint.r = boneElem.GetFloat("r", 1.0f);
-			tint.g = boneElem.GetFloat("g", 1.0f);
-			tint.b = boneElem.GetFloat("b", 1.0f);
-			tint.a = boneElem.GetFloat("a", 1.0f);
+            tint.r = boneElem.GetFloat("r", 1.0f);
+            tint.g = boneElem.GetFloat("g", 1.0f);
+            tint.b = boneElem.GetFloat("b", 1.0f);
+            tint.a = boneElem.GetFloat("a", 1.0f);
             Tint = tint;
         }
     }

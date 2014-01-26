@@ -54,7 +54,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor
                     var sinA = Mathf.Sin(unmapped.Angle);
                     var cosA = Mathf.Cos(unmapped.Angle);
 
-                    var pvt = spriteKey.File.GetPivotOffetFromMiddle();
+                    var pvt = spriteKey.GetPivotOffetFromMiddle();
 
                     pvt.x *= unmapped.Scale.x;
                     pvt.y *= unmapped.Scale.y;
@@ -196,6 +196,27 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor
 	}
     public static class AnimationCurveUtils
     {
+        /// <summary>
+        /// Add the specified key and set the in/out tangents for a linear curve
+        /// </summary>
+        public static void AddLinearKey(this AnimationCurve curve, Keyframe keyframe)
+        {
+            var keys = curve.keys;
+            //Second or later keyframe - make the slopes linear
+            if (keys.Length > 0)
+            {
+                var lastFrame = keys[keys.Length - 1];
+                float slope = (keyframe.value - lastFrame.value) / (keyframe.time - lastFrame.time);
+                lastFrame.outTangent = keyframe.inTangent = slope;
+
+                //Update the last keyframe
+                curve.MoveKey(keys.Length - 1, lastFrame);
+            }
+
+            //Add the new frame
+            curve.AddKey(keyframe);
+        }
+
         public static void AddKeyIfChanged(this AnimationCurve curve, Keyframe keyframe)
         {
             var keys = curve.keys;
