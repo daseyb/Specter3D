@@ -90,8 +90,21 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
                 //acb.SetCurveRecursive(root.transform, mainlineKey.Time);
             }
 
-            //Duplicate the last key at the end time of the animation
-            acb.SetCurveRecursive(root.transform, animation.Length);
+            switch(animation.LoopType)
+            {
+                case LoopType.True:
+                    //Cycle back to first frame
+                    SetGameObjectForKey(root, animClip, animation.MainlineKeys.First());
+                    acb.SetCurveRecursive(root.transform, animation.Length);
+                    break;
+                case LoopType.False:
+                    //Duplicate the last key at the end time of the animation
+                    acb.SetCurveRecursive(root.transform, animation.Length);
+                    break;
+                default:
+                    Debug.LogWarning("Unsupported loop type: " + animation.LoopType.ToString());
+                    break;
+            }
 
             //Add the curves to our animation clip
             acb.AddCurves(animClip);
