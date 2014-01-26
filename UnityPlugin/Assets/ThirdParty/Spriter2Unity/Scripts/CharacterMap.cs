@@ -29,6 +29,25 @@ public class CharacterMap : MonoBehaviour
     [SerializeField]
     public List<FolderMap> Folders = new List<FolderMap>();
 
+    /// <summary>
+    /// Set the material on all child SpriteRenderer objects
+    /// </summary>
+    public Material SpriteMaterial
+    {
+        get { return spriteMaterial; }
+        set
+        {
+            spriteMaterial = value;
+            var spriteRenderers = gameObject.GetComponentsInChildren<SpriteRenderer>();
+            foreach (var spriteRenderer in spriteRenderers)
+            {
+                spriteRenderer.material = value;
+            }
+        }
+    }
+    [SerializeField]
+    private Material spriteMaterial;
+
     public Sprite GetSprite(int folderId, int fileId)
     {
         if (folderId > Folders.Count)
@@ -55,7 +74,7 @@ public class CharacterMap : MonoBehaviour
 
     public void ChangeSprite(string packedData)
     {
-		//Debug.Log ("Called ChangeSprite(" + packedData + ")");
+        //Debug.Log ("Called ChangeSprite(" + packedData + ")");
         var unpacked = packedData.Split(';');
         if (unpacked.Length != 3)
             throw new Exception("Invalid parameter supplied to ChangeSprite --   " + packedData);
@@ -73,9 +92,12 @@ public class CharacterMap : MonoBehaviour
         else
         {
             var spriteRenderer = target.GetComponent<SpriteRenderer>();
-			var sprite = GetSprite(folderId, fileId);
-			if(sprite == null) Debug.Log ("Sprite Not Found!");
-			spriteRenderer.sprite = sprite;
+            if (spriteMaterial != null)
+                spriteRenderer.material = spriteMaterial;
+
+            var sprite = GetSprite(folderId, fileId);
+            if (sprite == null) Debug.Log("Sprite Not Found!");
+            spriteRenderer.sprite = sprite;
         }
     }
 }
