@@ -74,7 +74,16 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
                 pb.MakePrefab(entity, go);
 
                 //Update prefab if it exists, otherwise create a new one
-                PrefabUtility.CreatePrefab(prefabPath, go, ReplacePrefabOptions.ConnectToPrefab);
+                var prefabGo = AssetDatabase.LoadAssetAtPath(prefabPath, typeof(GameObject));
+                if (prefabGo == null)
+                {
+                    PrefabUtility.CreatePrefab(prefabPath, go, ReplacePrefabOptions.ConnectToPrefab);
+                }
+                else
+                {
+                    Debug.Log("Replacing Prefab");
+                    PrefabUtility.ReplacePrefab(go, prefabGo, ReplacePrefabOptions.ConnectToPrefab);
+                }
 
                 //Add animations to prefab object
                 var anim = new AnimationBuilder();

@@ -41,12 +41,22 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
 
         public void BuildAnimationClips(GameObject root, Entity entity, string scmlAssetPath)
         {
+            var allAnimClips = AssetDatabase.LoadAllAssetRepresentationsAtPath(scmlAssetPath).OfType<AnimationClip>().ToArray();
+            //Debug.Log(string.Format("Found {0} animation clips at {1}", allAnimClips.Length, scmlAssetPath));
+            
             foreach (var animation in entity.Animations)
             {
                 var animClip = MakeAnimationClip(root, animation);
                 //Debug.Log(string.Format("Added animClip({0}) to asset path ({1}) WrapMode:{2}", animClip.name, scmlAssetPath, animClip.wrapMode));
-
-                AssetDatabase.AddObjectToAsset(animClip, scmlAssetPath);
+                
+                var originalAnimClip = allAnimClips.Where(clip => clip.name == animClip.name).FirstOrDefault();
+                if (originalAnimClip != null)
+                {
+                    Debug.Log("Replacing animation clip " + animClip.name);
+                    EditorUtility.CopySerialized(animClip, originalAnimClip);
+                }
+                else
+                    AssetDatabase.AddObjectToAsset(animClip, scmlAssetPath);
             }
         }
 
