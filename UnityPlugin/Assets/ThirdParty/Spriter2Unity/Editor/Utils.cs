@@ -241,7 +241,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor
                     {
                         //Increase to cubic
                         var c1 = (2 * lastKey.CurveParams[0]) / 3;
-                        var c2 = (2 * lastKey.CurveParams[0] + 1) / 3;
+                        var c2 = 1 - (2 * lastKey.CurveParams[0] + 1) / 3;
 
                         //Convert [0,1] into unity-acceptable tangents
                         c1 *= 3 * (keyframe.value - lastKeyframe.value) / (keyframe.time - lastKeyframe.time);
@@ -261,7 +261,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor
                     {
                         //Get curve parameters
                         var c1 = lastKey.CurveParams[0];
-                        var c2 = lastKey.CurveParams[1];
+                        var c2 = 1 - lastKey.CurveParams[1];
 
                         //Convert [0,1] into unity-acceptable tangents
                         c1 *= 3 * (keyframe.value - lastKeyframe.value) / (keyframe.time - lastKeyframe.time);
