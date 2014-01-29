@@ -148,7 +148,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor
         {
             string value = defaultVal;
             var attr = node.Attributes[key];
-            if(attr !=null)
+            if (attr != null)
             {
                 value = attr.Value;
             }
@@ -193,9 +193,96 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor
 
             return value;
         }
-	}
+    }
     public static class AnimationCurveUtils
     {
+        public const float MIN_DELTA_TIME = 0.001f;
+        public static void AddKey(this AnimationCurve curve, Keyframe keyframe, TimelineKey lastKey)
+        {
+            //Early out - if this is the first key just add it
+            if (lastKey == null)
+            {
+                curve.AddKey(keyframe);
+                return;
+            }
+
+            //Get the last keyframe
+            var keys = curve.keys;
+            if (keys.Length == 0)
+            {
+                Debug.LogError("non-null lastKey supplied to AddKey but no previous key found!");
+                return;
+            }
+            Keyframe lastKeyframe = keys[keys.Length - 1];
+
+            //If no TimelineKey is supplied, default to Linear curve
+            CurveType curveType = lastKey.CurveType;
+
+            switch (curveType)
+            {
+                case CurveType.Instant:
+                    lastKeyframe.outTangent = 0;
+                    curve.MoveKey(keys.Length - 1, lastKeyframe);
+
+                    keyframe.inTangent = float.PositiveInfinity;
+                    curve.AddKey(keyframe);
+                    break;
+
+                case CurveType.Linear:
+                    var val = (keyframe.value - lastKeyframe.value) / (keyframe.time - lastKeyframe.time);
+                    lastKeyframe.outTangent = val;
+                    curve.MoveKey(keys.Length - 1, lastKeyframe);
+
+                    keyframe.inTangent = val;
+                    curve.AddKey(keyframe);
+                    break;
+
+                case CurveType.Quadratic:
+                    {
+                        //Increase to cubic
+                        var c1 = (2 * lastKey.CurveParams[0]) / 3;
+                        var c2 = (2 * lastKey.CurveParams[0] + 1) / 3;
+
+                        //Convert [0,1] into unity-acceptable tangents
+                        c1 *= 3 * (keyframe.value - lastKeyframe.value) / (keyframe.time - lastKeyframe.time);
+                        c2 *= 3 * (keyframe.value - lastKeyframe.value) / (keyframe.time - lastKeyframe.time);
+
+                        //Set the out tangent for the previous frame and update
+                        lastKeyframe.outTangent = c1;
+                        curve.MoveKey(keys.Length - 1, lastKeyframe);
+
+                        //Set the in tangent for the current frame and add
+                        keyframe.inTangent = c2;
+                        curve.AddKey(keyframe);
+                        break;
+                    }
+
+                case CurveType.Cubic:
+                    {
+                        //Get curve parameters
+                        var c1 = lastKey.CurveParams[0];
+                        var c2 = lastKey.CurveParams[1];
+
+                        //Convert [0,1] into unity-acceptable tangents
+                        c1 *= 3 * (keyframe.value - lastKeyframe.value) / (keyframe.time - lastKeyframe.time);
+                        c2 *= 3 * (keyframe.value - lastKeyframe.value) / (keyframe.time - lastKeyframe.time);
+
+                        //Set the out tangent for the previous frame and update
+                        lastKeyframe.outTangent = c1;
+                        curve.MoveKey(keys.Length - 1, lastKeyframe);
+
+                        //Set the in tangent for the current frame and add
+                        keyframe.inTangent = c2;
+                        curve.AddKey(keyframe);
+                        break;
+                    }
+
+                default:
+                    Debug.LogWarning("CurveType " + curveType.ToString() + " not yet supported!");
+                    break;
+            }
+        }
+
         /// <summary>
         /// Add the specified key and set the in/out tangents for a linear curve
         /// </summary>

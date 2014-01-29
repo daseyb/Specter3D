@@ -35,6 +35,8 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
         Linear,
         Quadratic,
         Cubic,
+        Quartic,
+        Quintic,
     }
 
     public enum SpinDirection{

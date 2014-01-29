@@ -32,6 +32,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
     {
         public Timeline Timeline { get; private set; }
         public CurveType CurveType { get; private set; }
+        public float[] CurveParams { get; private set; }
 
         public TimelineKey(XmlElement element, Timeline timeline)
             : base(element)
@@ -41,13 +42,6 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
 
         protected virtual void Parse(XmlElement element, Timeline timeline)
         {
-            Timeline = timeline;
-        }
-
-        protected override void Parse(System.Xml.XmlElement element)
-        {
-            base.Parse(element);
-
             string curveString = element.GetString("curve_type", "linear");
             switch (curveString)
             {
@@ -63,10 +57,43 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
                 case "cubic":
                     CurveType = Spriter.CurveType.Cubic;
                     break;
+                case "quartic":
+                    CurveType = Spriter.CurveType.Quartic;
+                    break;
+                case "quintic":
+                    CurveType = Spriter.CurveType.Quintic;
+                    break;
                 default:
                     CurveType = Spriter.CurveType.INVALID;
                     break;
             }
+
+            Timeline = timeline;
+
+            GetCurveParams(element);
+        }
+
+        void GetCurveParams(XmlElement element)
+        {
+            //Get curve parameters using a bit of XPath, order using LINQ
+            //XPath 1.0 doesn't support regex - should match all attributes with names matching "c[0-9]+"
+            var curveParams = element.SelectNodes("@*[starts-with(name(), 'c') and string(number(substring(name(),2))) != 'NaN']")
+                .OfType<XmlAttribute>()
+                .OrderBy(attr => attr.Name);
+
+            //Cast the values to float and convert to an array
+            CurveParams = curveParams
+                .Select(attr => float.Parse(attr.Value))
+                .ToArray();
+            /*
+            //Debug Output - consider using #ifdef instead
+            if(curveParams.Count > 0)
+            {
+                var curveParamString = curveParams.OfType<XmlAttribute>()
+                    .Select(attr => "\"" + attr.Name + "\":" + attr.Value)
+                    .Aggregate((current,next)=> current + ";" + next);
+                UnityEngine.Debug.Log(string.Format("Found {0} curve parameters on timeline {1}, key {2} curvetype {3} ({4})", curveParams.Count, Timeline.Name, Id, CurveType, curveParamString));
+            }*/
         }
     }
 }

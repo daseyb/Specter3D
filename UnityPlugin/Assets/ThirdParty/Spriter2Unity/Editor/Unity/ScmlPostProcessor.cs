@@ -68,22 +68,33 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
                 //Change to forward slash for asset database friendliness
                 prefabPath = prefabPath.Replace('\\', '/');
 
-                GameObject go = new GameObject();
-
-                //Build the prefab based on the supplied entity
-                pb.MakePrefab(entity, go);
-
-                //Update prefab if it exists, otherwise create a new one
+                //Either instantiate the existing prefab or create a new one
+                GameObject go;
                 var prefabGo = AssetDatabase.LoadAssetAtPath(prefabPath, typeof(GameObject));
                 if (prefabGo == null)
                 {
+                    go = new GameObject();
                     PrefabUtility.CreatePrefab(prefabPath, go, ReplacePrefabOptions.ConnectToPrefab);
                 }
                 else
                 {
-                    Debug.Log("Replacing Prefab");
-                    PrefabUtility.ReplacePrefab(go, prefabGo, ReplacePrefabOptions.ConnectToPrefab);
+                    go = GameObject.Instantiate(prefabGo) as GameObject;
+                    //Destroy any existing children of go
+                    foreach(Transform child in go.transform)
+                    {
+                        GameObject.DestroyImmediate(child.gameObject);
+                    }
+
+                    //Destroy CharacterMap (if it exists)
+                    var charmap = go.GetComponent<CharacterMap>();
+                    if (charmap) GameObject.DestroyImmediate(charmap);
                 }
+
+                //Build the prefab based on the supplied entity
+                pb.MakePrefab(entity, go);
+
+                //Update the prefab
+                PrefabUtility.ReplacePrefab(go, prefabGo, ReplacePrefabOptions.ConnectToPrefab);
 
                 //Add animations to prefab object
                 var anim = new AnimationBuilder();
@@ -92,11 +103,13 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
                 //Add a generic avatar - because why not?
                 //TODO: May need to eventually break this into a separate class
                 //  ie: if we want to look for a root motion node by naming convention
-                var avatar = AvatarBuilder.BuildGenericAvatar(go, "");
-                avatar.name = go.name;
-                AssetDatabase.AddObjectToAsset(avatar, prefabPath);
+                //var avatar = AvatarBuilder.BuildGenericAvatar(go, "");
+                //avatar.name = go.name;
+                //AssetDatabase.AddObjectToAsset(avatar, prefabPath);
 
                 GameObject.DestroyImmediate(go);
+
+                AssetDatabase.SaveAssets();
             }
         }
     }

@@ -164,14 +164,24 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             TimelineKey key = childRef.Referenced;
 
             TimelineKey lastKey;
+            //Early out - if the key hasn't changed
             if (lastKeyframeCache.TryGetValue(key.Timeline, out lastKey) && key == lastKey)
             {
                 return;
             }
-            lastKeyframeCache[key.Timeline] = key;
 
-            //Get the relative path based on the current hierarchy, find the target GameObject
+            //Get the relative path based on the current hierarchy
             var relativePath = childRef.RelativePath;
+
+            //If this is the root, skip it
+            if (string.IsNullOrEmpty(relativePath))
+            {
+                Debug.Log("Skipping root node in SetGameObjectForRef (SHOULD NEVER HAPPEN)");
+                return;
+            }
+
+
+            //Find the gameObject based on relative path
             var transform = root.transform.Find(relativePath);
             if (transform == null)
             {
@@ -199,7 +209,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             else if (localEulerAngles.z - oldEulerAngles.z > 180) localEulerAngles.z -= 360;
             transform.localEulerAngles = localEulerAngles;
 
-            acb.SetCurve(root.transform, transform, key.Time);
+            acb.SetCurve(root.transform, transform, key.Time, lastKey);
 
             //Get last-used game object for this Timeline - needed to clean up reparenting
             GameObject lastGameObject;
@@ -215,8 +225,11 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
                 //Deactivate the old object
                 lastGameObject.SetActive(false);
 
-                acb.SetCurve(root.transform, lastGameObject.transform, key.Time);
+                acb.SetCurve(root.transform, lastGameObject.transform, key.Time, lastKey);
             }
+
+            //Set cached value for last keyframe
+            lastKeyframeCache[key.Timeline] = key;
         }
 
         /// <summary>

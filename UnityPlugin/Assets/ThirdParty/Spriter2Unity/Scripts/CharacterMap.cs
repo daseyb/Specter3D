@@ -37,11 +37,14 @@ public class CharacterMap : MonoBehaviour
         get { return spriteMaterial; }
         set
         {
-            spriteMaterial = value;
-            var spriteRenderers = gameObject.GetComponentsInChildren<SpriteRenderer>();
-            foreach (var spriteRenderer in spriteRenderers)
+            if (value != null)
             {
-                spriteRenderer.material = value;
+                spriteMaterial = value;
+                var spriteRenderers = gameObject.GetComponentsInChildren<SpriteRenderer>();
+                foreach (var spriteRenderer in spriteRenderers)
+                {
+                    spriteRenderer.material = value;
+                }
             }
         }
     }
