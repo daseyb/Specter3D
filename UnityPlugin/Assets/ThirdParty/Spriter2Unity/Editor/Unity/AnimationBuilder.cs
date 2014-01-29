@@ -41,7 +41,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
 
         public void BuildAnimationClips(GameObject root, Entity entity, string scmlAssetPath)
         {
-            var allAnimClips = AssetDatabase.LoadAllAssetRepresentationsAtPath(scmlAssetPath).OfType<AnimationClip>().ToArray();
+            var allAnimClips = AssetDatabase.LoadAllAssetRepresentationsAtPath(scmlAssetPath).OfType<AnimationClip>().ToList();
             //Debug.Log(string.Format("Found {0} animation clips at {1}", allAnimClips.Length, scmlAssetPath));
             
             foreach (var animation in entity.Animations)
@@ -54,9 +54,17 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
                 {
                     Debug.Log("Replacing animation clip " + animClip.name);
                     EditorUtility.CopySerialized(animClip, originalAnimClip);
+                    allAnimClips.Remove(originalAnimClip);
                 }
                 else
                     AssetDatabase.AddObjectToAsset(animClip, scmlAssetPath);
+            }
+
+            //Remove any animation clips that are no longer present in the SCML
+            foreach(var clip in allAnimClips)
+            {
+                //This may be a bad idea
+                UnityEngine.Object.DestroyImmediate(clip, true);
             }
         }
 
