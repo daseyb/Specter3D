@@ -1,9 +1,0 @@
-import SpriteRenderer
-import PrefabSaver
-import Consts
-import Transform
-import GameObject
-import AnimationClip
-import MetaReader
-import MonoBehaviour
-import MB_AssignSprite
