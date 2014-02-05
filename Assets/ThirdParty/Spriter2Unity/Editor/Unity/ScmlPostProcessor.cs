@@ -33,13 +33,27 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
 {
     public class ScmlPostProcessor : AssetPostprocessor
     {
-        static void OnPostprocessAllAssets (
+        //HACK: Currently no known way to get the path of this script file from Unity
+        const string ASSET_PATH = "Spriter2Unity/Editor/Unity/ScmlPostProcessor.cs";
+
+        static void OnPostprocessAllAssets(
             string[] importedAssets,
             string[] deletedAssets,
             string[] movedAssets,
             string[] movedFromAssetPaths)
         {
-            foreach(var path in importedAssets)
+            //Reimport everything if the importer itself has been modified or added
+            //.Union(deletedAssets).Union(movedAssets).Union(movedFromAssetPaths)
+            bool shouldReimportAll = importedAssets.Where(s => s.EndsWith(ASSET_PATH)).FirstOrDefault() != null;
+
+            //If we should reimport all SCML files, replace the passed in array with ALL scml project files
+            if(shouldReimportAll)
+            {
+                Debug.Log("Reimporting all SCML files in project...");
+                importedAssets = AssetDatabase.GetAllAssetPaths().Where(assetPath => assetPath.EndsWith(".scml")).ToArray();
+            }
+            
+            foreach (var path in importedAssets)
             {
                 if (!path.EndsWith(".scml"))
                     continue;
@@ -74,13 +88,13 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
                 if (prefabGo == null)
                 {
                     go = new GameObject();
-                    PrefabUtility.CreatePrefab(prefabPath, go, ReplacePrefabOptions.ConnectToPrefab);
+                    prefabGo = PrefabUtility.CreatePrefab(prefabPath, go, ReplacePrefabOptions.ConnectToPrefab);
                 }
                 else
                 {
                     go = GameObject.Instantiate(prefabGo) as GameObject;
                     //Destroy any existing children of go
-                    foreach(Transform child in go.transform)
+                    foreach (Transform child in go.transform)
                     {
                         GameObject.DestroyImmediate(child.gameObject);
                     }
@@ -91,7 +105,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
                 }
 
                 //Build the prefab based on the supplied entity
-                pb.MakePrefab(entity, go);
+                pb.MakePrefab(entity, go, folderPath);
 
                 //Update the prefab
                 PrefabUtility.ReplacePrefab(go, prefabGo, ReplacePrefabOptions.ConnectToPrefab);

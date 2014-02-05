@@ -121,20 +121,6 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
             }
         }
 
-        private Sprite sprite = null;
-        public Sprite GetSprite()
-        {
-            if (sprite == null)
-            {
-                var assetPath = AssetDatabase.GetAllAssetPaths().Where(path => path.EndsWith(Name)).FirstOrDefault();
-                if (!string.IsNullOrEmpty(assetPath))
-                {
-                    sprite = AssetDatabase.LoadAssetAtPath(assetPath, typeof(Sprite)) as Sprite;
-                }
-            }
-            return sprite;
-        }
-
         public Vector2 GetPivotOffetFromMiddle()
         {
             var mid = Size / 2;

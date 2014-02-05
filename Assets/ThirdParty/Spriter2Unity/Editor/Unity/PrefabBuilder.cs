@@ -37,7 +37,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
     {
         private CharacterMap charMap;
 
-        public GameObject MakePrefab(Entity entity, GameObject root)
+        public GameObject MakePrefab(Entity entity, GameObject root, string spriteFolder)
         {
             //Clean sweep in case we're reusing an existing prefab
             foreach(Transform child in root.transform)
@@ -50,7 +50,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
 
             //Build the character map first
             var mapBuilder = new CharacterMapBuilder();
-            charMap = mapBuilder.BuildMap(entity, root);
+            charMap = mapBuilder.BuildMap(entity, root, spriteFolder);
 
             //Build the GameObject hierarchy
             foreach (var animation in entity.Animations)

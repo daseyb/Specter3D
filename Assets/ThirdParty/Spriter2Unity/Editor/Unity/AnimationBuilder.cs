@@ -108,16 +108,30 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
                 //acb.SetCurveRecursive(root.transform, mainlineKey.Time);
             }
 
+
+            //Set the loop/wrap settings for the animation clip
+            var animSettings = AnimationUtility.GetAnimationClipSettings(animClip);
             switch(animation.LoopType)
             {
                 case LoopType.True:
-                    //Cycle back to first frame
-                    SetGameObjectForKey(root, animClip, animation.MainlineKeys.First());
-                    acb.SetCurveRecursive(root.transform, animation.Length);
+                    //Cycle back to first frame                    
+                    SetGameObjectForKey(root, animClip, animation.MainlineKeys.First(), animation.Length);
+
+                    animClip.wrapMode = WrapMode.Loop;
+                    animSettings.loopTime = true;
                     break;
                 case LoopType.False:
                     //Duplicate the last key at the end time of the animation
-                    acb.SetCurveRecursive(root.transform, animation.Length);
+                    SetGameObjectForKey(root, animClip, animation.MainlineKeys.Last(), animation.Length);
+
+                    animClip.wrapMode = WrapMode.ClampForever;
+                    break;
+                case LoopType.PingPong:
+                    //Duplicate the last key at the end time of the animation
+                    SetGameObjectForKey(root, animClip, animation.MainlineKeys.Last(), animation.Length);
+
+                    animClip.wrapMode = WrapMode.PingPong;
+                    animSettings.loopTime = true;
                     break;
                 default:
                     Debug.LogWarning("Unsupported loop type: " + animation.LoopType.ToString());
@@ -126,31 +140,11 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
 
             //Add the curves to our animation clip
             acb.AddCurves(animClip);
-
-            //Set the loop/wrap settings for the animation clip
-            var animSettings = AnimationUtility.GetAnimationClipSettings(animClip);
-            switch (animation.LoopType)
-            {
-                case LoopType.True:
-                    animClip.wrapMode = WrapMode.Loop;
-                    animSettings.loopTime = true;
-                    break;
-                case LoopType.False:
-                    animClip.wrapMode = WrapMode.ClampForever;
-                    break;
-                case LoopType.PingPong:
-                    animClip.wrapMode = WrapMode.PingPong;
-                    animSettings.loopTime = true;
-                    break;
-                default:
-                    animClip.wrapMode = WrapMode.Once;
-                    break;
-            }
             animClip.SetAnimationSettings(animSettings);
             //Debug.Log(string.Format("Setting animation {0} to {1} loop mode (WrapMode:{2}  LoopTime:{3}) ", animClip.name, animation.LoopType, animClip.wrapMode, animSettings.loopTime));
         }
 
-        private void SetGameObjectForKey(GameObject root, AnimationClip animClip, MainlineKey mainlineKey)
+        private void SetGameObjectForKey(GameObject root, AnimationClip animClip, MainlineKey mainlineKey, float time = -1)
         {
             //Could do this recursively - this is easier
             Stack<Ref> toProcess = new Stack<Ref>(mainlineKey.GetChildren(null));
@@ -159,7 +153,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             {
                 var next = toProcess.Pop();
 
-                SetGameObjectForRef(root, next);
+                SetGameObjectForRef(root, next, time);
                 SetSpriteEvent(animClip, mainlineKey.Time, next);
 
                 var children = mainlineKey.GetChildren(next);
@@ -167,9 +161,10 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             }
         }
 
-        private void SetGameObjectForRef(GameObject root, Ref childRef)
+        private void SetGameObjectForRef(GameObject root, Ref childRef, float time)
         {
             TimelineKey key = childRef.Referenced;
+            if (time < 0) time = key.Time;
 
             TimelineKey lastKey;
             //Early out - if the key hasn't changed
@@ -211,13 +206,20 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             transform.localPosition = localPosition;
             transform.localScale = localScale;
 
-            //Spriter limits rotation between keyframes to 180 degrees (ie: 5 degrees to 350 degrees is a -15 degree rotation, NOT a 345 degree one)
+            //Spin the object in the correct direction
             var oldEulerAngles = transform.localEulerAngles;
-            if (oldEulerAngles.z - localEulerAngles.z > 180) localEulerAngles.z += 360;
-            else if (localEulerAngles.z - oldEulerAngles.z > 180) localEulerAngles.z -= 360;
+            switch(childRef.Unmapped.Spin)
+            {
+                case SpinDirection.Clockwise:
+                    while (oldEulerAngles.z > localEulerAngles.z) localEulerAngles.z += 360;
+                    break;
+                case SpinDirection.CounterClockwise:
+                    while (oldEulerAngles.z < localEulerAngles.z) localEulerAngles.z -= 360;
+                    break;
+            }
             transform.localEulerAngles = localEulerAngles;
 
-            acb.SetCurve(root.transform, transform, key.Time, lastKey);
+            acb.SetCurve(root.transform, transform, time, lastKey);
 
             //Get last-used game object for this Timeline - needed to clean up reparenting
             GameObject lastGameObject;
@@ -233,7 +235,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
                 //Deactivate the old object
                 lastGameObject.SetActive(false);
 
-                acb.SetCurve(root.transform, lastGameObject.transform, key.Time, lastKey);
+                acb.SetCurve(root.transform, lastGameObject.transform, time, lastKey);
             }
 
             //Set cached value for last keyframe

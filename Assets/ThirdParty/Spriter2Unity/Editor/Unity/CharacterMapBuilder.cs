@@ -32,7 +32,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
     public class CharacterMapBuilder
     {
         //1. Parse out all used file/folder ids
-        public CharacterMap BuildMap(Spriter.Entity entity, GameObject root)
+        public CharacterMap BuildMap(Spriter.Entity entity, GameObject root, string spritePath = null)
         {
             var files = new HashSet<Spriter.File>();
             GetUsedFiles(entity, files);
@@ -41,10 +41,36 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             var charMap = root.AddComponent<CharacterMap>();
             foreach(var file in files)
             {
-                var fileMap = new FileMap { FilePath = file.Name, Sprite = file.GetSprite() };
+                Sprite sprite = GetSpriteAtPath(file.Name, spritePath);
+                var fileMap = new FileMap { FilePath = file.Name, Sprite = sprite };
                 charMap.SetFile(file.Folder.Id, file.Id, fileMap);
             }
             return charMap;
+        }
+
+        /// <summary>
+        /// Finds the correct sprite for the given file path and sprite folder.
+        /// </summary>
+        /// <param name="filePath">The relative path of the sprite</param>
+        /// <param name="spriteFolder">Root folder for sprite path. If null, the entire project is searched.</param>
+        private Sprite GetSpriteAtPath(string filePath, string spriteFolder)
+        {
+            Sprite sprite = null;
+
+            if(string.IsNullOrEmpty(spriteFolder))
+            {
+                var assetPath = AssetDatabase.GetAllAssetPaths().Where(path => path.EndsWith(filePath)).FirstOrDefault();
+                if (!string.IsNullOrEmpty(assetPath))
+                {
+                    sprite = (Sprite)AssetDatabase.LoadAssetAtPath(assetPath, typeof(Sprite));
+                }
+            }
+            else
+            {
+                var assetPath = System.IO.Path.Combine(spriteFolder, filePath);
+                sprite = (Sprite)AssetDatabase.LoadAssetAtPath(assetPath, typeof(Sprite));
+            }
+            return sprite;
         }
 
         private void GetUsedFiles(Spriter.Entity entity, HashSet<Spriter.File> files)
