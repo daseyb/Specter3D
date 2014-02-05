@@ -30,7 +30,7 @@ using Assets.ThirdParty.Spriter2Unity.Editor.Spriter;
 
 namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
 {
-    using Animation = Spriter.Animation;
+    using Animation = Spriter.SpriterAnimation;
     public class AnimationBuilder
     {
         Dictionary<Timeline, GameObject> lastGameObjectCache = new Dictionary<Timeline, GameObject>(); //Used to determine active/inactive toggle

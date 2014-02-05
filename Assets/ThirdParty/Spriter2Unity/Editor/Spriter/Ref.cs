@@ -83,14 +83,14 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
             return spatialInfo;
         }
 
-        public Ref(XmlElement element, Animation animation, MainlineKey parentKey)
+        public Ref(XmlElement element, SpriterAnimation animation, MainlineKey parentKey)
             :base(element)
         {
             MainlineKey = parentKey;
             Parse(element, animation, parentKey);
         }
 
-        private void Parse(XmlElement element, Animation animation, MainlineKey parentKey)
+        private void Parse(XmlElement element, SpriterAnimation animation, MainlineKey parentKey)
         {
             Referenced = GetTimelineKey(element, animation);
 
@@ -101,7 +101,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
             }
         }
 
-        protected TimelineKey GetTimelineKey(XmlElement element, Animation animation)
+        protected TimelineKey GetTimelineKey(XmlElement element, SpriterAnimation animation)
         {
             int timeline = element.GetInt("timeline", 0);
             int key = element.GetInt("key", 0);

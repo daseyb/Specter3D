@@ -34,7 +34,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
 
 		public ScmlObject Scml { get; private set;}
         public string Name { get; private set; }
-        public IEnumerable<Animation> Animations { get { return animations; } }
+        public IEnumerable<SpriterAnimation> Animations { get { return animations; } }
 
         public Entity(XmlElement element, ScmlObject scml)
             : base(element)
@@ -53,13 +53,13 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
 
         private void LoadAnimations(XmlElement element)
         {
-            var animElements = element.GetElementsByTagName(Animation.XmlKey);
+            var animElements = element.GetElementsByTagName(SpriterAnimation.XmlKey);
             foreach (XmlElement animElement in animElements)
             {
-                animations.Add(new Animation(animElement, this));
+                animations.Add(new SpriterAnimation(animElement, this));
             }
         }
 
-        private List<Animation> animations = new List<Animation>();
+        private List<SpriterAnimation> animations = new List<SpriterAnimation>();
     }
 }

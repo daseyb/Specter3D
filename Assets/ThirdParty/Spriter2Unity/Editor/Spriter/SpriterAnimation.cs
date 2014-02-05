@@ -54,7 +54,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
         }
     }
 
-    public class Animation : KeyElem
+    public class SpriterAnimation : KeyElem
     {
         public const string XmlKey = "animation";
 
@@ -67,7 +67,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
         public IEnumerable<MainlineKey> MainlineKeys { get { return mainlineKeys; } }
         public IEnumerable<Timeline> Timelines { get { return timelines; } }
 
-        public Animation(XmlElement element, Entity entity)
+        public SpriterAnimation(XmlElement element, Entity entity)
             : base(element)
         { 
 			Parse (element, entity);

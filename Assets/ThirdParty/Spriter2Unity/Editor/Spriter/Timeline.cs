@@ -32,18 +32,18 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
     {
         public const string XmlKey = "timeline";
 
-		public Animation Animation { get; private set; }
+		public SpriterAnimation Animation { get; private set; }
         public string Name { get; private set; }
         public ObjectType ObjectType { get; private set; }
         public IEnumerable<TimelineKey> Keys { get{return keys;} }
 
-        public Timeline(XmlElement element, Animation animation)
+        public Timeline(XmlElement element, SpriterAnimation animation)
             :base(element)
         {		
 			Parse (element, animation);
 		}
 
-        protected virtual void Parse(XmlElement element, Animation animation)
+        protected virtual void Parse(XmlElement element, SpriterAnimation animation)
 		{
 			Animation = animation;
             Name = element.GetString("name", "");

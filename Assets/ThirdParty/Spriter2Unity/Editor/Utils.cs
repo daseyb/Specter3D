@@ -199,20 +199,22 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor
         public const float MIN_DELTA_TIME = 0.001f;
         public static void AddKey(this AnimationCurve curve, Keyframe keyframe, TimelineKey lastKey)
         {
-            //Early out - if this is the first key just add it
-            if (lastKey == null)
+            var keys = curve.keys;
+
+            //Early out - if this is the first key on this curve just add it
+            if (keys.Length == 0)
             {
                 curve.AddKey(keyframe);
                 return;
             }
 
-            //Get the last keyframe
-            var keys = curve.keys;
-            if (keys.Length == 0)
+            if(lastKey == null)
             {
-                Debug.LogError("non-null lastKey supplied to AddKey but no previous key found!");
+                Debug.Log(string.Format("ERROR: NULL lastkey passed to AddKey when curve contains {0} keys", keys.Length));
                 return;
             }
+
+            //Get the last keyframe
             Keyframe lastKeyframe = keys[keys.Length - 1];
 
             //If no TimelineKey is supplied, default to Linear curve

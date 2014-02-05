@@ -50,13 +50,13 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
         public IEnumerable<BoneRef> BoneRefs { get { return refs.OfType<BoneRef>(); } }
         public IEnumerable<ObjectRef> ObjectRefs { get { return refs.OfType<ObjectRef>(); } }
 
-        public MainlineKey(XmlElement element, Animation animation)
+        public MainlineKey(XmlElement element, SpriterAnimation animation)
             : base(element)
         {
             Parse(element, animation);
         }
         
-        protected virtual void Parse(XmlElement element, Animation animation)
+        protected virtual void Parse(XmlElement element, SpriterAnimation animation)
         {
             //Get elements
             //TODO: Ensure proper ordering of elements to prevent dependency errors

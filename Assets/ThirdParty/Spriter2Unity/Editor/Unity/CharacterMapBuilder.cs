@@ -55,7 +55,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             }
         }
 
-        private void GetUsedFiles(Spriter.Animation animation, HashSet<Spriter.File> files)
+        private void GetUsedFiles(Spriter.SpriterAnimation animation, HashSet<Spriter.File> files)
         {
             foreach(var timeline in animation.Timelines)
             {

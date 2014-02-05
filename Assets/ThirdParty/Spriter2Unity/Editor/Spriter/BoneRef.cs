@@ -33,7 +33,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
     {
         public const string XmlKey = "bone_ref";
 
-        public BoneRef(XmlElement element, Animation animation, MainlineKey parentKey)
+        public BoneRef(XmlElement element, SpriterAnimation animation, MainlineKey parentKey)
             : base(element, animation, parentKey)
         { }
     }

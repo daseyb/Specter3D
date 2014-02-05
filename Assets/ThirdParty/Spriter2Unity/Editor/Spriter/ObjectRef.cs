@@ -34,7 +34,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
 
         public int ZIndex { get; private set; }
 
-        public ObjectRef(XmlElement element, Animation animation, MainlineKey parentKey)
+        public ObjectRef(XmlElement element, SpriterAnimation animation, MainlineKey parentKey)
             : base(element, animation, parentKey)
         { }
 

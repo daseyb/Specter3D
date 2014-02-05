@@ -31,7 +31,7 @@ using Assets.ThirdParty.Spriter2Unity.Editor.Spriter;
 namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
 {
     //Name clash between Spriter and Unity - use the Spriter version by default
-    using Animation = Assets.ThirdParty.Spriter2Unity.Editor.Spriter.Animation;
+    using Animation = Assets.ThirdParty.Spriter2Unity.Editor.Spriter.SpriterAnimation;
 
     public class PrefabBuilder
     {
