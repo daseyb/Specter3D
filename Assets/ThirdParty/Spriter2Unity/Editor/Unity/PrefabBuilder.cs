@@ -39,12 +39,6 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
 
         public GameObject MakePrefab(Entity entity, GameObject root, string spriteFolder)
         {
-            //Clean sweep in case we're reusing an existing prefab
-            foreach(Transform child in root.transform)
-            {
-                GameObject.DestroyImmediate(child.gameObject, true);
-            }
-
             //Set the name (in case it changed)
             root.name = entity.Name;
 

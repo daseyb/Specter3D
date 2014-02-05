@@ -84,7 +84,8 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
 
             Angle_Deg = element.GetFloat("angle", 0.0f);
 
-            Spin = (SpinDirection)element.GetInt("spin", 1);
+            int spinVal = element.GetInt("spin", 1);
+            Spin = (spinVal == -1) ? SpinDirection.Clockwise : SpinDirection.CounterClockwise;
         }
     }
 }

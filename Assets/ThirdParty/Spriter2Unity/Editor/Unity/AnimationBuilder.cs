@@ -108,28 +108,37 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
                 //acb.SetCurveRecursive(root.transform, mainlineKey.Time);
             }
 
+            switch (animation.LoopType)
+            {
+                case LoopType.True:
+                    //Cycle back to first frame
+                    SetGameObjectForKey(root, animClip, animation.MainlineKeys.First(), animation.Length);
+                    break;
+                case LoopType.False:
+                    //Duplicate the last key at the end time of the animation
+                    SetGameObjectForKey(root, animClip, animation.MainlineKeys.Last(), animation.Length);
+                    break;
+                default:
+                    Debug.LogWarning("Unsupported loop type: " + animation.LoopType.ToString());
+                    break;
+            }
+
+            //Add the curves to our animation clip
+            //NOTE: This MUST be done before modifying the settings, thus the double switch statement
+            acb.AddCurves(animClip);
 
             //Set the loop/wrap settings for the animation clip
             var animSettings = AnimationUtility.GetAnimationClipSettings(animClip);
             switch(animation.LoopType)
             {
                 case LoopType.True:
-                    //Cycle back to first frame                    
-                    SetGameObjectForKey(root, animClip, animation.MainlineKeys.First(), animation.Length);
-
                     animClip.wrapMode = WrapMode.Loop;
                     animSettings.loopTime = true;
                     break;
                 case LoopType.False:
-                    //Duplicate the last key at the end time of the animation
-                    SetGameObjectForKey(root, animClip, animation.MainlineKeys.Last(), animation.Length);
-
                     animClip.wrapMode = WrapMode.ClampForever;
                     break;
                 case LoopType.PingPong:
-                    //Duplicate the last key at the end time of the animation
-                    SetGameObjectForKey(root, animClip, animation.MainlineKeys.Last(), animation.Length);
-
                     animClip.wrapMode = WrapMode.PingPong;
                     animSettings.loopTime = true;
                     break;
@@ -138,8 +147,6 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
                     break;
             }
 
-            //Add the curves to our animation clip
-            acb.AddCurves(animClip);
             animClip.SetAnimationSettings(animSettings);
             //Debug.Log(string.Format("Setting animation {0} to {1} loop mode (WrapMode:{2}  LoopTime:{3}) ", animClip.name, animation.LoopType, animClip.wrapMode, animSettings.loopTime));
         }
@@ -208,6 +215,10 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
 
             //Spin the object in the correct direction
             var oldEulerAngles = transform.localEulerAngles;
+            
+            if (oldEulerAngles.z - localEulerAngles.z > 180) localEulerAngles.z += 360;
+            else if (localEulerAngles.z - oldEulerAngles.z > 180) localEulerAngles.z -= 360;
+            /*
             switch(childRef.Unmapped.Spin)
             {
                 case SpinDirection.Clockwise:
@@ -216,7 +227,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
                 case SpinDirection.CounterClockwise:
                     while (oldEulerAngles.z < localEulerAngles.z) localEulerAngles.z -= 360;
                     break;
-            }
+            }*/
             transform.localEulerAngles = localEulerAngles;
 
             acb.SetCurve(root.transform, transform, time, lastKey);

@@ -37,9 +37,9 @@ public class CharacterMap : MonoBehaviour
         get { return spriteMaterial; }
         set
         {
+            spriteMaterial = value;
             if (value != null)
             {
-                spriteMaterial = value;
                 var spriteRenderers = gameObject.GetComponentsInChildren<SpriteRenderer>();
                 foreach (var spriteRenderer in spriteRenderers)
                 {
@@ -99,7 +99,7 @@ public class CharacterMap : MonoBehaviour
                 spriteRenderer.material = spriteMaterial;
 
             var sprite = GetSprite(folderId, fileId);
-            if (sprite == null) Debug.Log("Sprite Not Found!");
+            if (sprite == null) Debug.LogError("Sprite Not Found!");
             spriteRenderer.sprite = sprite;
         }
     }
