@@ -83,25 +83,31 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
                 prefabPath = prefabPath.Replace('\\', '/');
 
                 //Either instantiate the existing prefab or create a new one
-                var prefabGo = (GameObject)AssetDatabase.LoadAssetAtPath(prefabPath, typeof(GameObject));
+                GameObject go;
+                var prefabGo = AssetDatabase.LoadAssetAtPath(prefabPath, typeof(GameObject));
                 if (prefabGo == null)
                 {
-                    var go = new GameObject();
+                    go = new GameObject();
                     prefabGo = PrefabUtility.CreatePrefab(prefabPath, go, ReplacePrefabOptions.ConnectToPrefab);
                 }
                 else
                 {
+                    go = GameObject.Instantiate(prefabGo) as GameObject;
+
                     //Destroy CharacterMap (if it exists)
-                    var charmap = prefabGo.GetComponent<CharacterMap>();
-                    if (charmap) GameObject.DestroyImmediate(charmap, true);
+                    var charmap = go.GetComponent<CharacterMap>();
+                    if (charmap) GameObject.DestroyImmediate(charmap);
                 }
 
                 //Build the prefab based on the supplied entity
-                pb.MakePrefab(entity, prefabGo, folderPath);
+                pb.MakePrefab(entity, go, folderPath);
+
+                //Update the prefab
+                PrefabUtility.ReplacePrefab(go, prefabGo, ReplacePrefabOptions.ConnectToPrefab);
 
                 //Add animations to prefab object
                 var anim = new AnimationBuilder();
-                anim.BuildAnimationClips(prefabGo, entity, prefabPath);
+                anim.BuildAnimationClips(go, entity, prefabPath);
 
                 //Add a generic avatar - because why not?
                 //TODO: May need to eventually break this into a separate class
@@ -109,6 +115,8 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
                 //var avatar = AvatarBuilder.BuildGenericAvatar(go, "");
                 //avatar.name = go.name;
                 //AssetDatabase.AddObjectToAsset(avatar, prefabPath);
+
+                GameObject.DestroyImmediate(go);
 
                 AssetDatabase.SaveAssets();
             }
