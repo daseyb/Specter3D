@@ -98,14 +98,15 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             SetActiveRecursive(root.transform, false);
             root.SetActive(true);
 
+            //Add a key for all objects on the first frame
+            acb.SetCurveRecursive(root.transform, 0);
+
             foreach (var mainlineKey in animation.MainlineKeys)
             {
                 //Debug.Log(string.Format("Starting MainlineKey for {0} at {1} seconds", animation.Name, mainlineKey.Time));
                 SetGameObjectForKey(root, animClip, mainlineKey);
 
-                //Take a snapshot for our animation
-                //AnimationMode.SampleAnimationClip(root, animClip, mainlineKey.Time);
-                //acb.SetCurveRecursive(root.transform, mainlineKey.Time);
+                //TODO: Objects that are hidden will be missing a MainlineKey - need to add keys to hide them
             }
 
             switch (animation.LoopType)
