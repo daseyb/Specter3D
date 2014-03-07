@@ -94,19 +94,19 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
         {
             acb = new AnimationCurveBuilder();
 
-            //Set all gameobjects to inactive in first frame
-            SetActiveRecursive(root.transform, false);
-            root.SetActive(true);
-
+            //Get a list of all sprites on this GO
+            var allSprites = root.GetComponentsInChildren<Transform>(true).Select(sr => AnimationUtility.CalculateTransformPath(sr.transform, root.transform));
+            
             //Add a key for all objects on the first frame
-            acb.SetCurveRecursive(root.transform, 0);
+            //acb.SetCurveRecursive(root.transform, 0);
 
             foreach (var mainlineKey in animation.MainlineKeys)
             {
                 //Debug.Log(string.Format("Starting MainlineKey for {0} at {1} seconds", animation.Name, mainlineKey.Time));
-                SetGameObjectForKey(root, animClip, mainlineKey);
-
-                //TODO: Objects that are hidden will be missing a MainlineKey - need to add keys to hide them
+                var visibleSprites = SetGameObjectForKey(root, animClip, mainlineKey);
+                var hiddenSprites = allSprites.Except(visibleSprites);
+                Debug.Log(string.Format("Hiding {0} sprites in animation {1}, time {2}", hiddenSprites.Count(), animation.Name, mainlineKey.Time));
+                HideSprites(root, hiddenSprites, mainlineKey.Time);
             }
 
             switch (animation.LoopType)
@@ -152,8 +152,29 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             //Debug.Log(string.Format("Setting animation {0} to {1} loop mode (WrapMode:{2}  LoopTime:{3}) ", animClip.name, animation.LoopType, animClip.wrapMode, animSettings.loopTime));
         }
 
-        private void SetGameObjectForKey(GameObject root, AnimationClip animClip, MainlineKey mainlineKey, float time = -1)
+        private void HideSprites(GameObject root, IEnumerable<string> relativePaths, float time)
         {
+            foreach(var relativePath in relativePaths)
+            {
+                //Find the gameObject based on relative path
+                var transform = root.transform.Find(relativePath);
+                if (transform == null)
+                {
+                    Debug.LogError("ERROR: Unable to find GameObject at relative path " + relativePath);
+                    return;
+                }
+
+                var gameObject = transform.gameObject;
+                gameObject.SetActive(false);
+
+                Debug.Log("Hiding object " + relativePath);
+                acb.SetCurveActiveOnly(root.transform, transform, time);
+            }
+        }
+
+        private HashSet<string> SetGameObjectForKey(GameObject root, AnimationClip animClip, MainlineKey mainlineKey, float time = -1)
+        {
+            HashSet<string> paths = new HashSet<string>();
             //Could do this recursively - this is easier
             Stack<Ref> toProcess = new Stack<Ref>(mainlineKey.GetChildren(null));
 
@@ -161,12 +182,15 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             {
                 var next = toProcess.Pop();
 
+                paths.Add(next.RelativePath);
                 SetGameObjectForRef(root, next, time);
                 SetSpriteEvent(animClip, mainlineKey.Time, next);
 
                 var children = mainlineKey.GetChildren(next);
                 foreach (var child in children) toProcess.Push(child);
             }
+
+            return paths;
         }
 
         private void SetGameObjectForRef(GameObject root, Ref childRef, float time)

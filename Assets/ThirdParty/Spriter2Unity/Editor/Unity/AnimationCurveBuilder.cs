@@ -86,6 +86,16 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             UpdateTransformCurve(curves, current, time, lastTimelineKey);
         }
 
+        public void SetCurveActiveOnly(Transform root, Transform current, float time)
+        {
+            var path = AnimationUtility.CalculateTransformPath(current, root);
+            var curves = GetOrCreateAnimationCurves(path);
+
+            //IsActive curve
+            float val = (current.gameObject.activeInHierarchy) ? 1.0f : 0.0f;
+            curves[(int)AnimationCurveIndex.IsActive].AddKey(new Keyframe(time, val, float.PositiveInfinity, float.PositiveInfinity) { tangentMode = 0 });
+        }
+
         private void UpdateTransformCurve(AnimationCurve[] curves, Transform current, float time, TimelineKey lastTimelineKey)
         {
             float val;
