@@ -48,6 +48,9 @@ public class CharacterMap : MonoBehaviour
             }
         }
     }
+	//Dengar.EDIT: Generally there will be only one layer in an associated animation but I'm adding this just in case
+	//This will of course mean that the current edit only works as long as all the animations that pertain to this map are on the same layer
+	public int LayerID = 0; 
     [SerializeField]
     private Material spriteMaterial;
 
@@ -79,9 +82,18 @@ public class CharacterMap : MonoBehaviour
     {
         //Debug.Log ("Called ChangeSprite(" + packedData + ")");
         var unpacked = packedData.Split(';');
-        if (unpacked.Length != 3)
+        if (unpacked.Length != 4) //Dengar.EDIT: Added an extra parameter to identify the animation that calls the parameter
             throw new Exception("Invalid parameter supplied to ChangeSprite --   " + packedData);
 
+		//Dengar.EDIT: The next set of code should get rid of any "transition stutter"
+		Animator anim = GetComponent<Animator> ();
+		if(anim) //I can't let the program crash just because the user forgot to add an Animator Component or isn't using any to begin with
+		{
+			AnimatorStateInfo info = anim.GetCurrentAnimatorStateInfo(LayerID);
+			string clipName = (anim.GetLayerName(LayerID) + "." + unpacked[3]);
+			if(anim.IsInTransition(LayerID) && info.IsName (clipName))
+				return; //Ignores any function calls that come from the CURRENT state, only accepting from the NEXT state
+		}
         string relativePath = unpacked[0];
         int folderId, fileId;
         if (!int.TryParse(unpacked[1], out folderId))

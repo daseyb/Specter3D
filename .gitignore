@@ -22,3 +22,6 @@ version.txt
 /Library
 /Temp
 *.DotSettings
+/Assets/UnityVS.meta
+/Assets/UnityVS
+/obj

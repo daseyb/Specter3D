@@ -307,19 +307,20 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
         /// <param name="clip">Target AnimationClip for Event</param>
         /// <param name="time">Time at which event should be triggered</param>
         /// <param name="reference"></param>
-        private void SetSpriteEvent(AnimationClip clip, float time, Ref reference)
-        {
-            //Bump any events at t=0 up slightly
+        private void SetSpriteEvent(AnimationClip clip, float time, Ref reference) 
+		{ //Dengar.NOTE: My predecessors were so kind to add the "clip" parameter, despite it originally not adding anything to the function. That was exactly what I needed.
+			//Bump any events at t=0 up slightly
             if (time < float.Epsilon) time = 0.001f;
             var spriteKey = reference.Referenced as SpriteTimelineKey;
             //Only add event for SpriteTimelineKey objects
             if (spriteKey != null)
             {
                 //Pack parameters into a string - simplest way to pass multiple parameters currently
-                string packedParam = string.Format("{0};{1};{2}",
+				string packedParam = string.Format("{0};{1};{2};{3}", //Dengar.EDIT: Added an extra parameter to help identify the animation that calls the function
                     reference.RelativePath,
                     spriteKey.File.Folder.Id,
-                    spriteKey.File.Id);
+                    spriteKey.File.Id,
+				    clip.name); //Dengar.EDIT: That's this one.
 
                 //Debug.Log(string.Format("Adding event: ChangeSprite(\"{0}\") at t={1}", packedParam, time));
 
