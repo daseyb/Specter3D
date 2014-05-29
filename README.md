@@ -14,7 +14,7 @@ What it does:
 - sprites are changed during animations, so only 1 SpriteRenderer is used for each node in the spriter file
 - a Spriter2Unity component - the CharacterMap - is attached to the prefab to look up 
 - an AnimatorController is created (if it doesn't exist already)
-- an Animator component is attached to the prefab and gets a reference to the AnimatorController
+- an Animator component is attached to the prefab. It gets a reference to the AnimatorController
 
 Limitations (and why):
 - Only quadratic, cubic, linear and instant curves are supported
