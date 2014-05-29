@@ -13,6 +13,8 @@ What it does:
 - for each animation in SCML file creates a Unity animation under the prefab
 - sprites are changed during animations, so only 1 SpriteRenderer is used for each node in the spriter file
 - a Spriter2Unity component - the CharacterMap - is attached to the prefab to look up 
+- an AnimatorController is created (if it doesn't exist already)
+- an Animator component is attached to the prefab and gets a reference to the AnimatorController
 
 Limitations (and why):
 - Only quadratic, cubic, linear and instant curves are supported
@@ -21,5 +23,5 @@ Limitations (and why):
 Usage
 =====
 
-Copy the contents of the Assets folder into your Unity project's Assets folder or import the package from (https://github.com/bonus2113/Spriter2Unity/raw/master/Package/Spriter2Unity.unitypackage)
+Copy the contents of the Assets folder into your Unity project's Assets folder or import the package from [here] (https://github.com/bonus2113/Spriter2Unity/raw/master/Package/Spriter2Unity.unitypackage).
 Any SCML files copied into the project will be automatically processed. Prefabs are created in the same folder as the SCML file.
