@@ -17,3 +17,7 @@ format
 *.orig
 *.orig.meta
 version.txt
+/Assets/Test
+/Assets/Test.meta
+/Library
+/Temp
