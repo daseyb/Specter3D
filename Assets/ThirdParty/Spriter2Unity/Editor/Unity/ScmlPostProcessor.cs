@@ -27,6 +27,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using UnityEditor;
+using UnityEditorInternal;
 using UnityEngine;
 
 namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
@@ -97,18 +98,43 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
                     //Destroy CharacterMap (if it exists)
                     var charmap = go.GetComponent<CharacterMap>();
                     if (charmap) GameObject.DestroyImmediate(charmap);
+
+                    var oldAnimator = go.GetComponent<Animator>();
+                    if (oldAnimator) GameObject.DestroyImmediate(oldAnimator);
                 }
 
                 //Build the prefab based on the supplied entity
                 pb.MakePrefab(entity, go, folderPath);
 
-                //Update the prefab
-                PrefabUtility.ReplacePrefab(go, prefabGo, ReplacePrefabOptions.ConnectToPrefab);
+                var animator = go.AddComponent<Animator>();
+
+                
 
                 //Add animations to prefab object
                 var anim = new AnimationBuilder();
-                anim.BuildAnimationClips(go, entity, prefabPath);
+                var allAnimClips = anim.BuildAnimationClips(go, entity, prefabPath);
+                AssetDatabase.SaveAssets();
 
+                var animatorControllerPath = Path.ChangeExtension(prefabPath, "controller");
+                var oldController = (AnimatorController)AssetDatabase.LoadAssetAtPath(animatorControllerPath, typeof (AnimatorController));
+                var controller = oldController;
+
+                if (!oldController)
+                {
+                    controller = AnimatorController.CreateAnimatorControllerAtPath(animatorControllerPath);
+                    foreach (var animationClip in allAnimClips)
+                    {
+                        if (animationClip)
+                        {
+                            AnimatorController.AddAnimationClipToController(controller, animationClip);
+                        }
+                    }
+                }
+                AnimatorController.SetAnimatorController(animator, controller);
+                go.SetActive(true);
+                //Update the prefab
+                PrefabUtility.ReplacePrefab(go, prefabGo, ReplacePrefabOptions.ConnectToPrefab);
+                
                 //Add a generic avatar - because why not?
                 //TODO: May need to eventually break this into a separate class
                 //  ie: if we want to look for a root motion node by naming convention

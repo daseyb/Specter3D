@@ -39,16 +39,19 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
         List<AnimationEvent> animationEvents = new List<AnimationEvent>();
         AnimationCurveBuilder acb;
 
-        public void BuildAnimationClips(GameObject root, Entity entity, string scmlAssetPath)
+        public List<AnimationClip> BuildAnimationClips(GameObject root, Entity entity, string scmlAssetPath)
         {
             var allAnimClips = AssetDatabase.LoadAllAssetRepresentationsAtPath(scmlAssetPath).OfType<AnimationClip>().ToList();
-            //Debug.Log(string.Format("Found {0} animation clips at {1}", allAnimClips.Length, scmlAssetPath));
-            
+            Debug.Log(string.Format("Found {0} animation clips at {1}", allAnimClips.Count, scmlAssetPath));
+
+            var newAnimClips = new List<AnimationClip>();
+
             foreach (var animation in entity.Animations)
             {
                 var animClip = MakeAnimationClip(root, animation);
-                //Debug.Log(string.Format("Added animClip({0}) to asset path ({1}) WrapMode:{2}", animClip.name, scmlAssetPath, animClip.wrapMode));
-                
+                Debug.Log(string.Format("Added animClip({0}) to asset path ({1}) WrapMode:{2}", animClip.name, scmlAssetPath, animClip.wrapMode));
+                newAnimClips.Add(animClip);
+
                 var originalAnimClip = allAnimClips.Where(clip => clip.name == animClip.name).FirstOrDefault();
                 if (originalAnimClip != null)
                 {
@@ -66,6 +69,8 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
                 //This may be a bad idea
                 UnityEngine.Object.DestroyImmediate(clip, true);
             }
+
+            return newAnimClips;
         }
 
         public AnimationClip MakeAnimationClip(GameObject root, Animation animation)
@@ -105,7 +110,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
                 //Debug.Log(string.Format("Starting MainlineKey for {0} at {1} seconds", animation.Name, mainlineKey.Time));
                 var visibleSprites = SetGameObjectForKey(root, animClip, mainlineKey);
                 var hiddenSprites = allSprites.Except(visibleSprites);
-                Debug.Log(string.Format("Hiding {0} sprites in animation {1}, time {2}", hiddenSprites.Count(), animation.Name, mainlineKey.Time));
+//                Debug.Log(string.Format("Hiding {0} sprites in animation {1}, time {2}", hiddenSprites.Count(), animation.Name, mainlineKey.Time));
                 HideSprites(root, hiddenSprites, mainlineKey.Time);
             }
 
@@ -167,7 +172,6 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
                 var gameObject = transform.gameObject;
                 gameObject.SetActive(false);
 
-                Debug.Log("Hiding object " + relativePath);
                 acb.SetCurveActiveOnly(root.transform, transform, time);
             }
         }
@@ -256,6 +260,13 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             transform.localEulerAngles = localEulerAngles;
 
             acb.SetCurve(root.transform, transform, time, lastKey);
+
+            var spriteKey = key as SpriteTimelineKey;
+            if (spriteKey != null)
+            {
+                transform.GetComponent<SpriteRenderer>().sortingOrder = ((ObjectRef) childRef).ZIndex;
+            }
+           
 
             //Get last-used game object for this Timeline - needed to clean up reparenting
             GameObject lastGameObject;
