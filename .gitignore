@@ -21,3 +21,4 @@ version.txt
 /Assets/Test.meta
 /Library
 /Temp
+*.DotSettings
