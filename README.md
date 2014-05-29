@@ -21,5 +21,5 @@ Limitations (and why):
 Usage
 =====
 
-Copy the contents of the Assets folder into your Unity project's Assets folder.
+Copy the contents of the Assets folder into your Unity project's Assets folder or import the package from (https://github.com/bonus2113/Spriter2Unity/raw/master/Package/Spriter2Unity.unitypackage)
 Any SCML files copied into the project will be automatically processed. Prefabs are created in the same folder as the SCML file.
