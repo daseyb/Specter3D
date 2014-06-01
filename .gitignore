@@ -25,3 +25,4 @@ version.txt
 /Assets/UnityVS.meta
 /Assets/UnityVS
 /obj
+*.suo
