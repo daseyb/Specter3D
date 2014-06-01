@@ -24,6 +24,9 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 
+/// <summary>
+/// Handles Sprite mapping and provides a hook to change Sprites via animation events.
+/// </summary>
 public class CharacterMap : MonoBehaviour
 {
     [SerializeField]
@@ -48,6 +51,7 @@ public class CharacterMap : MonoBehaviour
             }
         }
     }
+
 	//Dengar.EDIT: Generally there will be only one layer in an associated animation but I'm adding this just in case
 	//This will of course mean that the current edit only works as long as all the animations that pertain to this map are on the same layer
 	public int LayerID = 0; 
@@ -80,7 +84,6 @@ public class CharacterMap : MonoBehaviour
 
     public void ChangeSprite(string packedData)
     {
-        //Debug.Log ("Called ChangeSprite(" + packedData + ")");
         var unpacked = packedData.Split(';');
         if (unpacked.Length != 4) //Dengar.EDIT: Added an extra parameter to identify the animation that calls the parameter
             throw new Exception("Invalid parameter supplied to ChangeSprite --   " + packedData);
@@ -115,40 +118,4 @@ public class CharacterMap : MonoBehaviour
             spriteRenderer.sprite = sprite;
         }
     }
-}
-
-[Serializable]
-public class FolderMap
-{
-    public int FolderId;
-    public string FolderName;
-
-    [SerializeField]
-    private List<FileMap> files = new List<FileMap>();
-
-    public FileMap this[int fileId]
-    {
-        get
-        {
-            if (fileId > files.Count)
-                throw new IndexOutOfRangeException(string.Format("File Id {0} fell outside of bounds {1}", fileId, files.Count));
-            return files[fileId];
-        }
-        set
-        {
-            int newSprites = fileId - files.Count + 1;
-            for (int i = 0; i < newSprites; i++)
-            {
-                files.Add(null);
-            }
-            files[fileId] = value;
-        }
-    }
-}
-
-[Serializable]
-public class FileMap
-{
-    public string FilePath;
-    public Sprite Sprite;
 }
