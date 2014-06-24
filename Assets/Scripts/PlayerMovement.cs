@@ -24,6 +24,11 @@ public class PlayerMovement : MonoBehaviour
 	    {
 	        animController.ActivateTrigger(PlayerTriggerType.Stab);
 	    }
+
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            animController.ActivateTrigger(PlayerTriggerType.Kick);
+        }
 	}
 
     void UpdateMovement()

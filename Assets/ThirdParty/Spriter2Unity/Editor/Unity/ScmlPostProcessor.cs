@@ -67,6 +67,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
         {
             string folderPath = Path.GetDirectoryName(assetPath);
 
+            //Load the SCML as XML
             var doc = new XmlDocument();
             doc.Load(assetPath);
 
@@ -147,5 +148,6 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
                 AssetDatabase.SaveAssets();
             }
         }
+        
     }
 }
