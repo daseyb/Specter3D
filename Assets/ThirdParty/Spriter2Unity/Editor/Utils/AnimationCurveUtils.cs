@@ -31,6 +31,8 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
     public static class AnimationCurveUtils
     {
         public const float MIN_DELTA_TIME = 0.001f;
+        public const bool ENABLE_KEYFRAME_REDUCATION = true;
+
         public static void AddKey(this AnimationCurve curve, Keyframe keyframe, TimelineKey lastKey)
         {
             var keys = curve.keys;
@@ -146,7 +148,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
             //If this is the first key on this curve, always add
             //NOTE: Add TWO copies of the first frame, then we adjust the last frame as we move along
             //This guarantees a minimum of two keys in each curve
-            if (keys.Length == 0)
+            if (keys.Length == 0 || !ENABLE_KEYFRAME_REDUCATION)
             {
                 curve.AddKey(keyframe);
                 keyframe.time += float.Epsilon;

@@ -34,15 +34,23 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
     using Animation = Spriter.SpriterAnimation;
     public class AnimationBuilder
     {
+        private struct SpriteChangeKey
+        {
+            public Sprite Sprite;
+            public float Time;
+        }
+
         Dictionary<Timeline, GameObject> lastGameObjectCache = new Dictionary<Timeline, GameObject>(); //Used to determine active/inactive toggle
         Dictionary<Timeline, TimelineKey> lastKeyframeCache = new Dictionary<Timeline, TimelineKey>();
 
         List<AnimationEvent> animationEvents = new List<AnimationEvent>();
+
+        private string spriteBaseFolder;
         
         /// <summary>
         /// Holds a list of sprite change key frames for each sprite object in the hierarchy. Indexed by the relative path to the object.
         /// </summary>
-        Dictionary<string, List<SpriteTimelineKey>> spriteChangeKeys = new Dictionary<string, List<SpriteTimelineKey>>();
+        Dictionary<string, List<SpriteChangeKey>> spriteChangeKeys = new Dictionary<string, List<SpriteChangeKey>>();
 
         AnimationCurveBuilder acb;
 
@@ -87,6 +95,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             animationEvents.Clear();
             lastKeyframeCache.Clear();
             spriteChangeKeys.Clear();
+            spriteBaseFolder = baseFolderPath;
 
             var animClip = new AnimationClip();
             animClip.name = animation.Name;
@@ -95,12 +104,12 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             AnimationUtility.SetAnimationType(animClip, ModelImporterAnimationType.Generic);
 
             //Populate the animation curves & events
-            MakeAnimationCurves(root, animClip, animation, baseFolderPath);
+            MakeAnimationCurves(root, animClip, animation);
 
             return animClip;
         }
 
-        private void MakeAnimationCurves(GameObject root, AnimationClip animClip, Animation animation, string baseFolderPath)
+        private void MakeAnimationCurves(GameObject root, AnimationClip animClip, Animation animation)
         {
             acb = new AnimationCurveBuilder();
 
@@ -108,14 +117,13 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             var allSprites = root.GetComponentsInChildren<Transform>(true).Select(sr => AnimationUtility.CalculateTransformPath(sr.transform, root.transform));
             
             //Add a key for all objects on the first frame
-            //acb.SetCurveRecursive(root.transform, 0);
+            SetGameObjectForKey(root, animClip, animation.MainlineKeys.First(), 0);
 
             foreach (var mainlineKey in animation.MainlineKeys)
             {
-                //Debug.Log(string.Format("Starting MainlineKey for {0} at {1} seconds", animation.Name, mainlineKey.Time));
+                
                 var visibleSprites = SetGameObjectForKey(root, animClip, mainlineKey);
                 var hiddenSprites = allSprites.Except(visibleSprites);
-//                Debug.Log(string.Format("Hiding {0} sprites in animation {1}, time {2}", hiddenSprites.Count(), animation.Name, mainlineKey.Time));
                 HideSprites(root, hiddenSprites, mainlineKey.Time);
             }
 
@@ -137,6 +145,14 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             //Add the curves to our animation clip
             //NOTE: This MUST be done before modifying the settings, thus the double switch statement
             acb.AddCurves(animClip);
+
+            foreach (var sprite in spriteChangeKeys)
+            {
+                if (sprite.Value.Count > 0)
+                {
+                    BuildSpriteChangeCurve(ref animClip, sprite);
+                }
+            }
 
             //Set the loop/wrap settings for the animation clip
             var animSettings = AnimationUtility.GetAnimationClipSettings(animClip);
@@ -160,10 +176,6 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
 
             animClip.SetAnimationSettings(animSettings);
 
-            foreach(var sprite in spriteChangeKeys)
-            {
-                BuildSpriteChangeCurve(ref animClip, sprite, baseFolderPath);
-            }
             //Debug.Log(string.Format("Setting animation {0} to {1} loop mode (WrapMode:{2}  LoopTime:{3}) ", animClip.name, animation.LoopType, animClip.wrapMode, animSettings.loopTime));
         }
 
@@ -198,7 +210,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
 
                 paths.Add(next.RelativePath);
                 SetGameObjectForRef(root, next, time);
-                SetSpriteEvent(animClip, mainlineKey.Time, next);
+                SetSpriteEvent(animClip, time, next);
 
                 var children = mainlineKey.GetChildren(next);
                 foreach (var child in children) toProcess.Push(child);
@@ -213,11 +225,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             if (time < 0) time = key.Time;
 
             TimelineKey lastKey;
-            //Early out - if the key hasn't changed
-            if (lastKeyframeCache.TryGetValue(key.Timeline, out lastKey) && key == lastKey)
-            {
-                return;
-            }
+            lastKeyframeCache.TryGetValue(key.Timeline, out lastKey);
 
             //Get the relative path based on the current hierarchy
             var relativePath = childRef.RelativePath;
@@ -299,7 +307,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             lastKeyframeCache[key.Timeline] = key;
         }
 
-        private void BuildSpriteChangeCurve(ref AnimationClip clip, KeyValuePair<string, List<SpriteTimelineKey>> timeline, string baseFolderPath)
+        private void BuildSpriteChangeCurve(ref AnimationClip clip, KeyValuePair<string, List<SpriteChangeKey>> timeline)
         {
             // First you need to create Editor Curve Binding
             EditorCurveBinding curveBinding = new EditorCurveBinding();
@@ -323,7 +331,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
                 // set the time
                 keyFrames[i].time = key.Time;
                 // set reference for the sprite you want
-                keyFrames[i].value = AssetUtils.GetSpriteAtPath(key.File.Name, baseFolderPath);
+                keyFrames[i].value = key.Sprite;
                 i++;
 
             }
@@ -356,13 +364,14 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             //Only add event for SpriteTimelineKey objects
             if (spriteKey != null)
             {
-                if(!spriteChangeKeys.ContainsKey(reference.RelativePath))
+                if (time < 0) time = spriteKey.Time;
+                if (!spriteChangeKeys.ContainsKey(reference.RelativePath))
                 {
-                    spriteChangeKeys[reference.RelativePath] = new List<SpriteTimelineKey>();
+                    spriteChangeKeys[reference.RelativePath] = new List<SpriteChangeKey>();
                 }
 
                 //Add the key to the dictionary to later build all the curves at once.
-                spriteChangeKeys[reference.RelativePath].Add(spriteKey);
+                spriteChangeKeys[reference.RelativePath].Add(new SpriteChangeKey() { Time = time, Sprite = AssetUtils.GetSpriteAtPath(spriteKey.File.Name, spriteBaseFolder) });
             }
         }
     }
