@@ -4765,7 +4765,8 @@ Prefab:
       propertyPath: AirFriction
       value: .00999999978
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 11400008, guid: 0f6c6477092092a4a83089847bf3cee3, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 0f6c6477092092a4a83089847bf3cee3, type: 2}
   m_RootGameObject: {fileID: 1511085110}
   m_IsPrefabParent: 0
@@ -4960,73 +4961,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3d0f345a9d011949bb652d972aa8f7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Folders:
-  - FolderId: 0
-    FolderName: 
-    files:
-    - FilePath: 536b756c6c2e706e67
-      Sprite: {fileID: 21300000, guid: 93eae88430ce8d845bac1df648b8015b, type: 3}
-    - FilePath: 4579652e706e67
-      Sprite: {fileID: 21300000, guid: 9043b1431101df043bf415555bae1f26, type: 3}
-    - FilePath: 6d6f7665312e706e67
-      Sprite: {fileID: 21300000, guid: 8dc4cbd3caf788c459a6c6876769014b, type: 3}
-    - FilePath: 6d6f7665322e706e67
-      Sprite: {fileID: 21300000, guid: 838713cbd93b84c42a829e04c780fe22, type: 3}
-    - FilePath: 6d6f7665332e706e67
-      Sprite: {fileID: 21300000, guid: a90792608bc165f4da5f297e1f47618d, type: 3}
-    - FilePath: 4d6f7665342e706e67
-      Sprite: {fileID: 21300000, guid: b23709ab87ef24d47ad981e3d5965924, type: 3}
-    - FilePath: 6d6f7665352e706e67
-      Sprite: {fileID: 21300000, guid: 6e342cc87b8d76c4791fa5c73ac964fe, type: 3}
-    - FilePath: 6d6f7665362e706e67
-      Sprite: {fileID: 21300000, guid: e8b4b0eaef1cc314e9182f437c30f0fb, type: 3}
-    - FilePath: 6d6f7665372e706e67
-      Sprite: {fileID: 21300000, guid: 37694d4c07e73b041bf32b60683b0122, type: 3}
-    - FilePath: 6d6f7665382e706e67
-      Sprite: {fileID: 21300000, guid: 3b1d8089de49deb4a9d8858e0837cd75, type: 3}
-    - FilePath: 6d6f7665392e706e67
-      Sprite: {fileID: 21300000, guid: 34706917199e654448035331fadaf501, type: 3}
-    - FilePath: 7374616e64312e706e67
-      Sprite: {fileID: 21300000, guid: 6490a3b9ce6389c42bca318331dff42d, type: 3}
-    - FilePath: 7374616e64322e706e67
-      Sprite: {fileID: 21300000, guid: 9c3be5da37cd6984d9e0a1fe2d5c799b, type: 3}
-    - FilePath: 7374616e64332e706e67
-      Sprite: {fileID: 21300000, guid: f14d68c6a5bff39419393c8ec4f470a9, type: 3}
-    - FilePath: 7374616e64342e706e67
-      Sprite: {fileID: 21300000, guid: a30b3e26112794b4187eba895aa6a995, type: 3}
-    - FilePath: 7374616e64352e706e67
-      Sprite: {fileID: 21300000, guid: d0cf1072c585ce94a8029ba2176afbef, type: 3}
-    - FilePath: 7374616e64362e706e67
-      Sprite: {fileID: 21300000, guid: 95dcdc5b5be9ff245b0d9348f83b119a, type: 3}
-    - FilePath: 7374616e64372e706e67
-      Sprite: {fileID: 21300000, guid: d26cac727940940468750c4db456b914, type: 3}
-    - FilePath: 7374616e64382e706e67
-      Sprite: {fileID: 21300000, guid: 27b99dc8a2aed5a4d9975b0970b79ee2, type: 3}
-    - FilePath: 7374616e64392e706e67
-      Sprite: {fileID: 21300000, guid: 0b455ffca7af29246ae1d85e4eb1a374, type: 3}
-    - FilePath: 7374616e6431302e706e67
-      Sprite: {fileID: 21300000, guid: a1215fa080b078c4eb32e90882806f4c, type: 3}
-    - FilePath: 7374616e6431312e706e67
-      Sprite: {fileID: 21300000, guid: 0d1e60ae4b2a333438e5fd50eb06d0e1, type: 3}
-    - FilePath: 7374616e6431322e706e67
-      Sprite: {fileID: 21300000, guid: 2716da7c6e5e6f841a6bcdc16aac3022, type: 3}
-    - FilePath: 536b756c6c372e706e67
-      Sprite: {fileID: 21300000, guid: 83247e7a55dac814d80cbf9942a24d63, type: 3}
-    - FilePath: 
-      Sprite: {fileID: 0}
-    - FilePath: 536b756c6c332e706e67
-      Sprite: {fileID: 21300000, guid: 2f9250619f9e85d46925f8656d175b1e, type: 3}
-    - FilePath: 536b756c6c342e706e67
-      Sprite: {fileID: 21300000, guid: 18358dd2a64568345a5fd126119e0b81, type: 3}
-    - FilePath: 536b756c6c352e706e67
-      Sprite: {fileID: 21300000, guid: f41af68b85ce51d4bae0b5a9e3006c6f, type: 3}
-    - FilePath: 536b756c6c362e706e67
-      Sprite: {fileID: 21300000, guid: a7719052b9e2a06409635851df56d1b7, type: 3}
-    - FilePath: 536b756c6c382e706e67
-      Sprite: {fileID: 21300000, guid: f757fa7fc46fa014c9f8b121e8d72073, type: 3}
-    - FilePath: 736b756c6c20626c75722e706e67
-      Sprite: {fileID: 21300000, guid: c77e6b833074f9249b38e40205e78f81, type: 3}
-  spriteMaterial: {fileID: 0}
 --- !u!4 &2104246174
 Transform:
   m_ObjectHideFlags: 0
@@ -5079,7 +5013,6 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 2113074266}
-  - 114: {fileID: 2113074269}
   - 95: {fileID: 2113074268}
   - 114: {fileID: 2113074267}
   m_Layer: 0
@@ -5171,146 +5104,6 @@ Animator:
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
   m_HasTransformHierarchy: 1
---- !u!114 &2113074269
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 11400008, guid: 0f6c6477092092a4a83089847bf3cee3,
-    type: 2}
-  m_PrefabInternal: {fileID: 1949305046}
-  m_GameObject: {fileID: 2113074265}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f3d0f345a9d011949bb652d972aa8f7a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Folders:
-  - FolderId: 0
-    FolderName: 
-    files:
-    - FilePath: 63686573742e706e67
-      Sprite: {fileID: 21300000, guid: 8d5ea483240824f44adcd1348f2578b7, type: 3}
-    - FilePath: 61726d2e706e67
-      Sprite: {fileID: 21300000, guid: 9a77a0d01baca62498081f710de13293, type: 3}
-    - FilePath: 6c696d62732e706e67
-      Sprite: {fileID: 21300000, guid: 884b8a6ffed9f6c479128fa8c66fab2c, type: 3}
-    - FilePath: 536b6972742e706e67
-      Sprite: {fileID: 21300000, guid: 86767e3220fd8b94da8fbd0cb4932b5b, type: 3}
-    - FilePath: 73746f6d6163682e706e67
-      Sprite: {fileID: 21300000, guid: c3f6c11a2dd1dd84eb240f408e709653, type: 3}
-    - FilePath: 5220706c6174652e706e67
-      Sprite: {fileID: 21300000, guid: e473f4f409dda4141b06132a979c8e1e, type: 3}
-    - FilePath: 4c20706c6174652e706e67
-      Sprite: {fileID: 21300000, guid: f589a4d6160317548be21a166a0e711a, type: 3}
-    - FilePath: 686561642e706e67
-      Sprite: {fileID: 21300000, guid: 985a71fa81261a34d8e0e389f76f1c3f, type: 3}
-    - FilePath: 4c2073686f756c6465722e706e67
-      Sprite: {fileID: 21300000, guid: 7e7963af705b18047bbdee993e332303, type: 3}
-    - FilePath: 522073686f756c6465722e706e67
-      Sprite: {fileID: 21300000, guid: d403b50876b6be240a84dfe232096c52, type: 3}
-    - FilePath: 48616e642e706e67
-      Sprite: {fileID: 21300000, guid: 5ae58d05417d6aa4db56f4a6324519c9, type: 3}
-    - FilePath: 4c616e63652e706e67
-      Sprite: {fileID: 21300000, guid: 5ce05a807f70d9647b58c0ac75316494, type: 3}
-    - FilePath: 6c65672e706e67
-      Sprite: {fileID: 21300000, guid: 0701962b40c65c847acf43c94b7e2c1a, type: 3}
-    - FilePath: 7473686f65312e706e67
-      Sprite: {fileID: 21300000, guid: a74e9c509e6ad8d43b7eb5696fac6fd5, type: 3}
-    - FilePath: 73686f65312e706e67
-      Sprite: {fileID: 21300000, guid: 49c81f7cf58f382429d419486f190c65, type: 3}
-    - FilePath: 6c6567342e706e67
-      Sprite: {fileID: 21300000, guid: 4fb4528694e4ee3478a7c259a830f5af, type: 3}
-    - FilePath: 7473686f77342e706e67
-      Sprite: {fileID: 21300000, guid: 09ab8a3c358d88348b303b4b01f7531c, type: 3}
-    - FilePath: 73686f65342e706e67
-      Sprite: {fileID: 21300000, guid: b763425eb52941d4fb7e4927567cb84e, type: 3}
-    - FilePath: 4c2073686f756c646572322e706e67
-      Sprite: {fileID: 21300000, guid: e3e3d846d1a2b07419fc321ad0c13256, type: 3}
-    - FilePath: 522073686f756c646572332e706e67
-      Sprite: {fileID: 21300000, guid: 71a1c4b2c70109e45a57242d56d7aedd, type: 3}
-    - FilePath: 522073686f756c646572322e706e67
-      Sprite: {fileID: 21300000, guid: a366a9468b0afea4e8579bf833f43820, type: 3}
-    - FilePath: 68656164322e706e67
-      Sprite: {fileID: 21300000, guid: 51118657d1b3c20489ce026f9242039f, type: 3}
-    - FilePath: 6368657374342e706e67
-      Sprite: {fileID: 21300000, guid: d848b09b839262c49a8f7e0d7c09f06e, type: 3}
-    - FilePath: 41726d322e706e67
-      Sprite: {fileID: 21300000, guid: 69a390c0d42a6194ab5ae415c61f5d9c, type: 3}
-    - FilePath: 68616e64342e706e67
-      Sprite: {fileID: 21300000, guid: b945ff03beaad7d4ab7de75ce5ea9415, type: 3}
-    - FilePath: 41726d206261636b312e706e67
-      Sprite: {fileID: 21300000, guid: 2bb8170c1c25e224eb3393b44733016c, type: 3}
-    - FilePath: 
-      Sprite: {fileID: 0}
-    - FilePath: 6368657374322e706e67
-      Sprite: {fileID: 21300000, guid: c98d3046283c04946ac2cca93360b7ae, type: 3}
-    - FilePath: 73746f6d616368322e706e67
-      Sprite: {fileID: 21300000, guid: 913f5cd3909f4c048aeeb8c5b1afd96f, type: 3}
-    - FilePath: 4c20706c617465322e706e67
-      Sprite: {fileID: 21300000, guid: 76e029a64212a0a41a7ccea800f97dbc, type: 3}
-    - FilePath: 68656164352e706e67
-      Sprite: {fileID: 21300000, guid: a46fdfc81211fac4db5ac262fee87d30, type: 3}
-    - FilePath: 537461622e706e67
-      Sprite: {fileID: 21300000, guid: 62cd0d8879a4c3240b3bae014de8f320, type: 3}
-    - FilePath: 
-      Sprite: {fileID: 0}
-    - FilePath: 68656164332e706e67
-      Sprite: {fileID: 21300000, guid: 3c5032202bb907f4aae65e2fa32d15e2, type: 3}
-    - FilePath: 
-      Sprite: {fileID: 0}
-    - FilePath: 53746162322e706e67
-      Sprite: {fileID: 21300000, guid: a0026e82fbe46904294f8b4b050310d7, type: 3}
-    - FilePath: 68656164342e706e67
-      Sprite: {fileID: 21300000, guid: 1a8408602c9c04d41a01ba0e0a61e3ee, type: 3}
-    - FilePath: 6c6567322e706e67
-      Sprite: {fileID: 21300000, guid: 2a66ddaf89d37b8468518112daf2c34a, type: 3}
-    - FilePath: 7473686f65322e706e67
-      Sprite: {fileID: 21300000, guid: 551be537975edab4e94299b3942da6a4, type: 3}
-    - FilePath: 73686f65322e706e67
-      Sprite: {fileID: 21300000, guid: 3e787e5d771c7cb4a80fe0f3eddb0a0d, type: 3}
-    - FilePath: 5220706c617465322e706e67
-      Sprite: {fileID: 21300000, guid: 13b800cbe6417584aa3098e7f0a0cbdf, type: 3}
-    - FilePath: 6368657374332e706e67
-      Sprite: {fileID: 21300000, guid: cfbc1836f24b82943bb430be68f7c141, type: 3}
-    - FilePath: 4c6567332e706e67
-      Sprite: {fileID: 21300000, guid: c829b193b35e83c4c8d8f423cc98c0a9, type: 3}
-    - FilePath: 7473686f65332e706e67
-      Sprite: {fileID: 21300000, guid: c7d366d4ab8f6c8479fb0aa46ac0e6f5, type: 3}
-    - FilePath: 
-      Sprite: {fileID: 0}
-    - FilePath: 
-      Sprite: {fileID: 0}
-    - FilePath: 73686f65352e706e67
-      Sprite: {fileID: 21300000, guid: 08f86fd597386b24085d271ecbbec650, type: 3}
-    - FilePath: 4c616e6365342e706e67
-      Sprite: {fileID: 21300000, guid: 89bd32a0f68f07447941ed05acd862a0, type: 3}
-    - FilePath: 41726d372e706e67
-      Sprite: {fileID: 21300000, guid: b1fb1c2218c37484cbbd4c9dd922e87b, type: 3}
-    - FilePath: 48616e64352e706e67
-      Sprite: {fileID: 21300000, guid: 47c7ce80d166e97418e910e2297912bb, type: 3}
-    - FilePath: 41726d382e706e67
-      Sprite: {fileID: 21300000, guid: 0167e49af1a65b94b9a12f2267ec8b4c, type: 3}
-    - FilePath: 48616e64362e706e67
-      Sprite: {fileID: 21300000, guid: 64b5ab4fe6f1ec14c8c928b64581ea48, type: 3}
-    - FilePath: 
-      Sprite: {fileID: 0}
-    - FilePath: 
-      Sprite: {fileID: 0}
-    - FilePath: 41726d332e706e67
-      Sprite: {fileID: 21300000, guid: 930137bc32320a64ea6ed77bafb7b2f5, type: 3}
-    - FilePath: 626c7572312e706e67
-      Sprite: {fileID: 21300000, guid: 5157f4a11117d7244b71d37a6d0ddbd1, type: 3}
-    - FilePath: 626c7572322e706e67
-      Sprite: {fileID: 21300000, guid: 0c0dc7212de5bb2479abef29d5aed43c, type: 3}
-    - FilePath: 626c7572332e706e67
-      Sprite: {fileID: 21300000, guid: 661e80590c8dbb54f835c8a0fe9aca3e, type: 3}
-  - FolderId: 0
-    FolderName: 
-    files:
-    - FilePath: 
-      Sprite: {fileID: 0}
-    - FilePath: 686974206566666563742f636972636c6520736d61636b2e706e67
-      Sprite: {fileID: 21300000, guid: 8a75f4964c0b67540b6245cfa8996ab3, type: 3}
-  spriteMaterial: {fileID: 0}
 --- !u!1 &2135169457
 GameObject:
   m_ObjectHideFlags: 0

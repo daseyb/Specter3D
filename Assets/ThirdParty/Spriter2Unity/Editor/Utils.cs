@@ -21,6 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 using UnityEngine;
+using System.Linq;
 using System.Collections;
 using System.Xml;
 using UnityEditor;
@@ -29,6 +30,29 @@ using System.Reflection;
 
 namespace Assets.ThirdParty.Spriter2Unity.Editor
 {
+    public static class AssetUtils
+    {
+        public static Sprite GetSpriteAtPath(string filePath, string spriteFolder)
+        {
+            Sprite sprite = null;
+
+            if (string.IsNullOrEmpty(spriteFolder))
+            {
+                var assetPath = AssetDatabase.GetAllAssetPaths().Where(path => path.EndsWith(filePath)).FirstOrDefault();
+                if (!string.IsNullOrEmpty(assetPath))
+                {
+                    sprite = (Sprite)AssetDatabase.LoadAssetAtPath(assetPath, typeof(Sprite));
+                }
+            }
+            else
+            {
+                var assetPath = System.IO.Path.Combine(spriteFolder, filePath);
+                sprite = (Sprite)AssetDatabase.LoadAssetAtPath(assetPath, typeof(Sprite));
+            }
+            return sprite;
+        }
+    }
+
     public static class PrefabUtils
     {
         public static float PixelScale = 0.01f;

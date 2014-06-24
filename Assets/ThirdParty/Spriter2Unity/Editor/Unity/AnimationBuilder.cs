@@ -26,6 +26,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using UnityEditor;
+using System.IO;
 using Assets.ThirdParty.Spriter2Unity.Editor.Spriter;
 
 namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
@@ -37,6 +38,12 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
         Dictionary<Timeline, TimelineKey> lastKeyframeCache = new Dictionary<Timeline, TimelineKey>();
 
         List<AnimationEvent> animationEvents = new List<AnimationEvent>();
+        
+        /// <summary>
+        /// Holds a list of sprite change key frames for each sprite object in the hierarchy. Indexed by the relative path to the object.
+        /// </summary>
+        Dictionary<string, List<SpriteTimelineKey>> spriteChangeKeys = new Dictionary<string, List<SpriteTimelineKey>>();
+
         AnimationCurveBuilder acb;
 
         public List<AnimationClip> BuildAnimationClips(GameObject root, Entity entity, string scmlAssetPath)
@@ -48,7 +55,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
 
             foreach (var animation in entity.Animations)
             {
-                var animClip = MakeAnimationClip(root, animation);
+                var animClip = MakeAnimationClip(root, animation, Path.GetDirectoryName(scmlAssetPath));
                 Debug.Log(string.Format("Added animClip({0}) to asset path ({1}) WrapMode:{2}", animClip.name, scmlAssetPath, animClip.wrapMode));
                 newAnimClips.Add(animClip);
 
@@ -73,12 +80,13 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             return newAnimClips;
         }
 
-        public AnimationClip MakeAnimationClip(GameObject root, Animation animation)
+        public AnimationClip MakeAnimationClip(GameObject root, Animation animation, string baseFolderPath)
         {
             //Clear local caches
             lastGameObjectCache.Clear();
             animationEvents.Clear();
             lastKeyframeCache.Clear();
+            spriteChangeKeys.Clear();
 
             var animClip = new AnimationClip();
             animClip.name = animation.Name;
@@ -87,15 +95,12 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             AnimationUtility.SetAnimationType(animClip, ModelImporterAnimationType.Generic);
 
             //Populate the animation curves & events
-            MakeAnimationCurves(root, animClip, animation);
-
-            //Add events to the clip
-            AnimationUtility.SetAnimationEvents(animClip, animationEvents.ToArray());
+            MakeAnimationCurves(root, animClip, animation, baseFolderPath);
 
             return animClip;
         }
 
-        private void MakeAnimationCurves(GameObject root, AnimationClip animClip, Animation animation)
+        private void MakeAnimationCurves(GameObject root, AnimationClip animClip, Animation animation, string baseFolderPath)
         {
             acb = new AnimationCurveBuilder();
 
@@ -154,6 +159,11 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             }
 
             animClip.SetAnimationSettings(animSettings);
+
+            foreach(var sprite in spriteChangeKeys)
+            {
+                BuildSpriteChangeCurve(ref animClip, sprite, baseFolderPath);
+            }
             //Debug.Log(string.Format("Setting animation {0} to {1} loop mode (WrapMode:{2}  LoopTime:{3}) ", animClip.name, animation.LoopType, animClip.wrapMode, animSettings.loopTime));
         }
 
@@ -289,6 +299,39 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
             lastKeyframeCache[key.Timeline] = key;
         }
 
+        private void BuildSpriteChangeCurve(ref AnimationClip clip, KeyValuePair<string, List<SpriteTimelineKey>> timeline, string baseFolderPath)
+        {
+            // First you need to create Editor Curve Binding
+            EditorCurveBinding curveBinding = new EditorCurveBinding();
+
+            // I want to change the sprites of the sprite renderer, so I put the typeof(SpriteRenderer) as the binding type.
+            curveBinding.type = typeof(SpriteRenderer);
+
+            // Regular path to the GameObject that will be changed
+            curveBinding.path = timeline.Key;
+
+            // This is the property name to change the sprite of a sprite renderer
+            curveBinding.propertyName = "m_Sprite";
+
+            // An array to hold the object keyframes
+            ObjectReferenceKeyframe[] keyFrames = new ObjectReferenceKeyframe[timeline.Value.Count];
+
+            int i = 0;
+            foreach (var key in timeline.Value)
+            {
+                keyFrames[i] = new ObjectReferenceKeyframe();
+                // set the time
+                keyFrames[i].time = key.Time;
+                // set reference for the sprite you want
+                keyFrames[i].value = AssetUtils.GetSpriteAtPath(key.File.Name, baseFolderPath);
+                i++;
+
+            }
+
+            AnimationUtility.SetObjectReferenceCurve(clip, curveBinding, keyFrames);
+        }
+
+
         /// <summary>
         /// Recursively calls SetActive on transform and all children
         /// </summary>
@@ -309,22 +352,17 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
         /// <param name="reference"></param>
         private void SetSpriteEvent(AnimationClip clip, float time, Ref reference)
         {
-            //Bump any events at t=0 up slightly
-            if (time < float.Epsilon) time = 0.001f;
             var spriteKey = reference.Referenced as SpriteTimelineKey;
             //Only add event for SpriteTimelineKey objects
             if (spriteKey != null)
             {
-                //Pack parameters into a string - simplest way to pass multiple parameters currently
-                string packedParam = string.Format("{0};{1};{2}",
-                    reference.RelativePath,
-                    spriteKey.File.Folder.Id,
-                    spriteKey.File.Id);
+                if(!spriteChangeKeys.ContainsKey(reference.RelativePath))
+                {
+                    spriteChangeKeys[reference.RelativePath] = new List<SpriteTimelineKey>();
+                }
 
-                //Debug.Log(string.Format("Adding event: ChangeSprite(\"{0}\") at t={1}", packedParam, time));
-
-                //Add events to a list - Unity forces us to set the entire array at once
-                animationEvents.Add(new AnimationEvent() { functionName = "ChangeSprite", stringParameter = packedParam, time = time });
+                //Add the key to the dictionary to later build all the curves at once.
+                spriteChangeKeys[reference.RelativePath].Add(spriteKey);
             }
         }
     }
