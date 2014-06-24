@@ -67,6 +67,7 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
         {
             string folderPath = Path.GetDirectoryName(assetPath);
 
+            //Load the SCML as XML
             var doc = new XmlDocument();
             doc.Load(assetPath);
 
@@ -94,10 +95,6 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
                 else
                 {
                     go = GameObject.Instantiate(prefabGo) as GameObject;
-
-                    //Destroy CharacterMap (if it exists)
-                    var charmap = go.GetComponent<CharacterMap>();
-                    if (charmap) GameObject.DestroyImmediate(charmap);
 
                     var oldAnimator = go.GetComponent<Animator>();
                     if (oldAnimator) GameObject.DestroyImmediate(oldAnimator);
@@ -147,5 +144,6 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
                 AssetDatabase.SaveAssets();
             }
         }
+        
     }
 }

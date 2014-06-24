@@ -4,7 +4,8 @@ using System.Collections;
 public enum PlayerTriggerType
 {
     Stab,
-    Jump
+    Jump,
+    Kick
 }
 
 public class PlayerAnimationController : MonoBehaviour
