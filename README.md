@@ -29,3 +29,5 @@ Detailed:
   3. Import your whole Spriter project folder into Unity.
   4. With Unity open, go to the folder you saved the Unity package to and double click it.
   5. Unity should pop up with a dialog asking if you want to import the assets, click import on the bottom right.
+
+Unity should now import the Spriter2Unity package and then automatically convert your SCML files to prefabs. The prefabs will be in the same folder as the SCML files.
