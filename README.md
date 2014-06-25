@@ -16,6 +16,13 @@ What it does:
 Limitations (and why):
   * Only quadratic, cubic, linear and instant curves are supported
   * Mainline curves are not yet imported
+  
+Important missing features:
+  * Animated ZIndex
+  * Support for pivots
+  * Sounds
+  * Points
+  * Boxes
 
 ##Usage
 
