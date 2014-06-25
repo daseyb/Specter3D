@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014 Andrew Jones, Dario Seyb
+Copyright (c) 2014 Andrew Jones
  Based on 'Spriter2Unity' python code by Malhavok
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,30 +20,36 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-using System;
-using System.Collections.Generic;
+using UnityEngine;
 using System.Linq;
-using System.Text;
+using System.Collections;
 using System.Xml;
+using UnityEditor;
+using Assets.ThirdParty.Spriter2Unity.Editor.Spriter;
+using System.Reflection;
 
 namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
 {
-    public class Key : KeyElem
+    public static class AssetUtils
     {
-        public const string XmlKey = "key";
-
-        public int Time_Ms { get; private set; }
-        public float Time { get { return ((float)Time_Ms) / 1000; } }
-
-        public Key(XmlElement element)
-            : base(element)
-        { }
-
-        protected override void Parse(XmlElement element)
+        public static Sprite GetSpriteAtPath(string filePath, string spriteFolder)
         {
-            base.Parse(element);
+            Sprite sprite = null;
 
-            Time_Ms = element.GetInt("time", 0);
+            if (string.IsNullOrEmpty(spriteFolder))
+            {
+                var assetPath = AssetDatabase.GetAllAssetPaths().Where(path => path.EndsWith(filePath)).FirstOrDefault();
+                if (!string.IsNullOrEmpty(assetPath))
+                {
+                    sprite = (Sprite)AssetDatabase.LoadAssetAtPath(assetPath, typeof(Sprite));
+                }
+            }
+            else
+            {
+                var assetPath = System.IO.Path.Combine(spriteFolder, filePath);
+                sprite = (Sprite)AssetDatabase.LoadAssetAtPath(assetPath, typeof(Sprite));
+            }
+            return sprite;
         }
     }
 }
