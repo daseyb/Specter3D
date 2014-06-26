@@ -13,10 +13,11 @@ What it does:
   * an AnimatorController is created (if it doesn't exist already)
   * an Animator component is attached to the prefab. It gets a reference to the AnimatorController.
 
-Limitations (and why):
+Known issues:
   * Only quadratic, cubic, linear and instant curves are supported
   * Mainline curves are not yet imported
   * Only works with a "Pixels To Units" setting of 100 
+  * Some animations throw errors when selecting/scrubbing through them in the editor. They work fine when runnign the game.
   
 Important missing features:
   * Sounds
