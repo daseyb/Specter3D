@@ -19,8 +19,6 @@ Limitations (and why):
   * Only works with a "Pixels To Units" setting of 100 
   
 Important missing features:
-  * Animated ZIndex
-  * Support for pivots
   * Sounds
   * Points
   * Boxes
