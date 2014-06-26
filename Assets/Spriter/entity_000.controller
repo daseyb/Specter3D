@@ -458,11 +458,6 @@ StateMachine:
   m_ChildStateMachinePosition: []
   m_OrderedTransitions:
     data:
-      first: {fileID: 110200000}
-      second:
-      - {fileID: 110168342}
-      - {fileID: 110124910}
-    data:
       first: {fileID: 0}
       second:
       - {fileID: 110110303}
@@ -471,6 +466,11 @@ StateMachine:
     data:
       first: {fileID: 110235244}
       second: []
+    data:
+      first: {fileID: 110200000}
+      second:
+      - {fileID: 110168342}
+      - {fileID: 110124910}
     data:
       first: {fileID: 110239965}
       second:

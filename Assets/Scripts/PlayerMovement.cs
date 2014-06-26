@@ -13,7 +13,7 @@ public class PlayerMovement : MonoBehaviour
 	void Start ()
 	{
 	    physics = GetComponent<EntityPhysics>();
-	    animController = GetComponentInChildren<PlayerAnimationController>();
+	    animController = GetComponent<PlayerAnimationController>();
 	}
 	
 	void Update () 
