@@ -17,7 +17,7 @@ Known issues:
   * Only quadratic, cubic, linear and instant curves are supported
   * Mainline curves are not yet imported
   * Only works with a "Pixels To Units" setting of 100 
-  * Some animations throw errors when selecting/scrubbing through them in the editor. They work fine when runnign the game.
+  * Some animations throw errors when selecting/scrubbing through them in the editor. They work fine when running the game.
   
 Important missing features:
   * Sounds
