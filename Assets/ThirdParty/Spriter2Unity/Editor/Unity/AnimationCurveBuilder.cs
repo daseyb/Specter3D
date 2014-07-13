@@ -28,6 +28,7 @@ using System.Text;
 using UnityEngine;
 using UnityEditor;
 using Assets.ThirdParty.Spriter2Unity.Editor.Spriter;
+using Spriter2Unity.Runtime;
 
 namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
 {
@@ -75,6 +76,8 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
                     SetCurveIfNotEmpty(ref animClip, kvp.Key, typeof(SortingOrderUpdate), "SortingOrder", curves[(int)AnimationCurveIndex.ZIndex]);
                 }
             }
+
+            //animClip.EnsureQuaternionContinuity();
         }
 
         public void SetCurveRecursive(Transform root, float time)

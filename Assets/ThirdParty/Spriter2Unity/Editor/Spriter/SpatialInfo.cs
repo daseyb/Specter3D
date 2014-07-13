@@ -56,15 +56,21 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Spriter
             if (parent == null)
                 return this;
 
-			var unmapped = new SpatialInfo();
+            var unmapped = new SpatialInfo();
 
-			unmapped.Position = new Vector2(
-				Position.x * parent.Scale.x,
-				Position.y * parent.Scale.y);
-			unmapped.Scale = new Vector2(
-				Scale.x * parent.Scale.x,
-				Scale.y * parent.Scale.y);
+            unmapped.Position = new Vector2(
+               Position.x * parent.Scale.x,
+               Position.y * parent.Scale.y);
+            unmapped.Scale = new Vector2(
+               Scale.x * parent.Scale.x,
+               Scale.y * parent.Scale.y);
             unmapped.Angle_Deg = Angle_Deg;
+
+            if (parent.Scale.x * parent.Scale.y < 0)
+            {
+                unmapped.Angle_Deg = 360 - unmapped.Angle_Deg;
+            }
+
             unmapped.Spin = Spin;
 
             return unmapped;

@@ -26,12 +26,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Assets.ThirdParty.Spriter2Unity.Editor.Spriter;
+using Spriter2Unity.Runtime;
 
 namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
 {
     //Name clash between Spriter and Unity - use the Spriter version by default
     using Animation = Assets.ThirdParty.Spriter2Unity.Editor.Spriter.SpriterAnimation;
+    using Assets.ThirdParty.Spriter2Unity.Editor.Spriter;
 
     public class PrefabBuilder
     {
@@ -39,6 +40,8 @@ namespace Assets.ThirdParty.Spriter2Unity.Editor.Unity
         {
             //Set the name (in case it changed)
             root.name = entity.Name;
+
+            root.AddComponent<SpriterEntity>();
 
             //Build the GameObject hierarchy
             foreach (var animation in entity.Animations)
