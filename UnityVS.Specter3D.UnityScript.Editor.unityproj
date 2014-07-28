@@ -153,7 +153,7 @@
     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\TwirlEffect.shader" />
     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\VignettingShader.shader" />
     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\VortexEffect.shader" />
-    <None Include="Assets\ThirdParty\Spriter2Unity\Example\Spriter Project\GreyGuy\Copyright_Information_Please_Read.txt" />
+    <None Include="Assets\ThirdsParty\Spriter2Unity\Assets\ThirdParty\Spriter2Unity\Example\Spriter Project\GreyGuy\Copyright_Information_Please_Read.txt" />
     <None Include="Assets\ThirdParty\UnityVS\Editor\SyntaxTree.VisualStudio.Unity.Bridge.dll" />
     <None Include="Assets\ThirdParty\UnityVS\Editor\SyntaxTree.VisualStudio.Unity.Messaging.dll" />
     <None Include="Assets\ThirdParty\UnityVS\Editor\UnityVS.VersionSpecific.dll" />
@@ -171,12 +171,16 @@
     <Folder Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_DepthOfField" />
     <Folder Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\Contrast Stretch" />
     <Folder Include="Assets\ThirdParty" />
-    <Folder Include="Assets\ThirdParty\Spriter2Unity" />
-    <Folder Include="Assets\ThirdParty\Spriter2Unity\Example" />
-    <Folder Include="Assets\ThirdParty\Spriter2Unity\Example\Spriter Project" />
-    <Folder Include="Assets\ThirdParty\Spriter2Unity\Example\Spriter Project\GreyGuy" />
     <Folder Include="Assets\ThirdParty\UnityVS" />
     <Folder Include="Assets\ThirdParty\UnityVS\Editor" />
+    <Folder Include="Assets\ThirdsParty" />
+    <Folder Include="Assets\ThirdsParty\Spriter2Unity" />
+    <Folder Include="Assets\ThirdsParty\Spriter2Unity\Assets" />
+    <Folder Include="Assets\ThirdsParty\Spriter2Unity\Assets\ThirdParty" />
+    <Folder Include="Assets\ThirdsParty\Spriter2Unity\Assets\ThirdParty\Spriter2Unity" />
+    <Folder Include="Assets\ThirdsParty\Spriter2Unity\Assets\ThirdParty\Spriter2Unity\Example" />
+    <Folder Include="Assets\ThirdsParty\Spriter2Unity\Assets\ThirdParty\Spriter2Unity\Example\Spriter Project" />
+    <Folder Include="Assets\ThirdsParty\Spriter2Unity\Assets\ThirdParty\Spriter2Unity\Example\Spriter Project\GreyGuy" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2013\UnityVS.UnityScript.targets" />
 </Project>
