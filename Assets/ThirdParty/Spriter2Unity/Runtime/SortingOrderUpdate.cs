@@ -1,24 +1,27 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[ExecuteInEditMode]
-public class SortingOrderUpdate : MonoBehaviour 
+namespace Spriter2Unity.Runtime
 {
-    public float SortingOrder = 0;
-
-    private Renderer cachedRenderer;
-
-	private void Start () 
+    [ExecuteInEditMode]
+    public class SortingOrderUpdate : MonoBehaviour
     {
-        cachedRenderer = renderer;
-        if(!cachedRenderer)
+        public float SortingOrder = 0;
+
+        private Renderer cachedRenderer;
+
+        private void Start()
         {
-            Destroy(this);
+            cachedRenderer = renderer;
+            if (!cachedRenderer)
+            {
+                Destroy(this);
+            }
         }
-	}
-	
-	private void Update () 
-    {
-        cachedRenderer.sortingOrder = (int)SortingOrder;
-	}
+
+        private void Update()
+        {
+            cachedRenderer.sortingOrder = (int)SortingOrder;
+        }
+    }
 }
