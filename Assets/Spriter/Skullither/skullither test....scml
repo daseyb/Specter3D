@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<spriter_data scml_version="1.0" generator="BrashMonkey Spriter" generator_version="b8">
+<spriter_data scml_version="1.0" generator="BrashMonkey Spriter" generator_version="b8_2">
     <folder id="0">
         <file id="0" name="Skull.png" width="545" height="835" pivot_x="0" pivot_y="1"/>
         <file id="1" name="Eye.png" width="100" height="141" pivot_x="0" pivot_y="1"/>
@@ -34,7 +34,7 @@
         <file id="30" name="skull blur.png" width="845" height="429" pivot_x="0" pivot_y="1"/>
     </folder>
     <entity id="0" name="entity_001">
-        <animation id="0" name="Walk" length="180" looping="false">
+        <animation id="0" name="Walk" length="180">
             <mainline>
                 <key id="0">
                     <object_ref id="0" timeline="0" key="0" z_index="0"/>
@@ -232,7 +232,7 @@
                 </key>
             </timeline>
         </animation>
-        <animation id="1" name="Stand" length="240" looping="false">
+        <animation id="1" name="Stand" length="240">
             <mainline>
                 <key id="0">
                     <object_ref id="0" timeline="0" key="0" z_index="0"/>
@@ -460,7 +460,7 @@
                 </key>
             </timeline>
         </animation>
-        <animation id="2" name="Attack" length="286" looping="false">
+        <animation id="2" name="Attack" length="286">
             <mainline>
                 <key id="0">
                     <object_ref id="0" timeline="0" key="0" z_index="0"/>
