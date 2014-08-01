@@ -20,6 +20,7 @@ public class DuckingMovementState : MovementState
     {
         base.OnEnterState();
         Anim.SetFlag(PlayerFlagType.Ducking, true);
+        Anim.ActivateTrigger(PlayerTriggerType.Duck);
     }
 
     public override void OnExitState()

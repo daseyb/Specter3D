@@ -1,6 +1,8 @@
 fileFormatVersion: 2
 guid: 43a9ec4f6dbd8834da6588e94dec0e37
 TextureImporter:
+  fileIDToRecycleName:
+    21300000: p_pelvis_idle
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -24,9 +26,9 @@ TextureImporter:
   maxTextureSize: 1024
   textureSettings:
     filterMode: -1
-    aniso: -1
+    aniso: 1
     mipBias: -1
-    wrapMode: -1
+    wrapMode: 1
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50

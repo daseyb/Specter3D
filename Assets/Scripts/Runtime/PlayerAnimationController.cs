@@ -12,7 +12,9 @@ public enum PlayerTriggerType
     Run,
     Turn,
     StopWalking,
-    Flutter
+    Flutter,
+    Duck,
+    Dash
 }
 
 public enum PlayerFlagType
@@ -20,7 +22,8 @@ public enum PlayerFlagType
     Ducking,
     Fluttering,
     OnGround,
-    Running
+    Running,
+    Dashing
 }
 
 public enum PlayerState
@@ -51,9 +54,14 @@ public class PlayerAnimationController : MonoBehaviour
             return;
         }
 
-        var scale = transform.localScale;
+        var scale = anim.transform.localScale;
         scale.x = dir;
-        transform.localScale = scale;
+        anim.transform.localScale = scale;
+    }
+
+    public int GetFacing()
+    {
+        return -prevDir;
     }
 
     public void SetFlag(PlayerFlagType flag, bool value)
@@ -76,14 +84,12 @@ public class PlayerAnimationController : MonoBehaviour
         }
     }
 
-	// Use this for initialization
-	void Start ()
+	private void Start ()
 	{
 	    anim = GetComponentInChildren<Animator>();
 	}
-	
-	// Update is called once per frame
-	void Update () 
+
+    private void Update() 
     {
         float speed = Mathf.Abs(MovementRigidbody.velocity.x);
         dampedSpeed = Mathf.SmoothDamp(dampedSpeed, speed, ref speedDampVel, 0.1f);
@@ -91,7 +97,7 @@ public class PlayerAnimationController : MonoBehaviour
         anim.SetFloat("speed", speed);
         anim.SetFloat("dampedSpeed", dampedSpeed);
 
-        int dir = (int)Mathf.Sign(transform.localScale.x);
+        int dir = (int)Mathf.Sign(anim.transform.localScale.x);
         if (prevDir != dir && speed > 0.1f)
         {
             ActivateTrigger(PlayerTriggerType.Turn, true);

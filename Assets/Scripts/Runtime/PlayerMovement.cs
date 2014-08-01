@@ -51,8 +51,9 @@ public class PlayerMovement : MonoBehaviour
     private void InitStates()
     {
         movementStates[MovementStateType.Base] = new MovementState(this, physics, animController, new MovementSettings() { MaxHorizontalSpeed = physics.MaxHorizontalSpeed, MaxVerticalSpeed = -1 });
-        movementStates[MovementStateType.Ducking] = new DuckingMovementState(this, physics, animController, new MovementSettings() { MaxHorizontalSpeed = 20, MaxVerticalSpeed = -1 });
+        movementStates[MovementStateType.Ducking] = new DuckingMovementState(this, physics, animController, new MovementSettings() { MaxHorizontalSpeed = physics.MaxHorizontalSpeed, MaxVerticalSpeed = -1 });
         movementStates[MovementStateType.Running] = new RunningMovementState(this, physics, animController, new MovementSettings() { MaxHorizontalSpeed = 40, MaxVerticalSpeed = -1 });
+        movementStates[MovementStateType.Dashing] = new DashingMovementState(this, physics, animController, new MovementSettings() { MaxHorizontalSpeed = 130, MaxVerticalSpeed = 0.1f });
 
         SetState(MovementStateType.Base);
     }
@@ -105,10 +106,7 @@ public class PlayerMovement : MonoBehaviour
                 {
                     jumpKeyTimer = 0;
                 }
-
-                //SetState(MovementStateType.Base);
             }
-
         }
 
         if(Input.GetKeyUp(KeyCode.S))
@@ -126,11 +124,6 @@ public class PlayerMovement : MonoBehaviour
         {
             SetState(MovementStateType.Base);
         }
-
-        /*if (currentState.Type == MovementStateType.Running)
-        {
-            SetState(MovementStateType.Base);
-        }*/
 
         UpdateFluttering();
     }
@@ -154,6 +147,13 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnDirectionDoubleTap()
     {
-        SetState(MovementStateType.Running);
+        if (Input.GetKey(KeyCode.D)) 
+        {
+            SetState(MovementStateType.Dashing);
+        }
+        else
+        {
+            SetState(MovementStateType.Running);
+        }
     }
 }

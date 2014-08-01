@@ -8,6 +8,7 @@ public enum MovementStateType
     Base,
     Ducking,
     Running,
+    Dashing,
     ENUM_COUNT,
 }
 

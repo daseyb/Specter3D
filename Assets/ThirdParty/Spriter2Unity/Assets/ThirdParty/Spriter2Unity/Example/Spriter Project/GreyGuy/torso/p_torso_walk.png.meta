@@ -1,6 +1,8 @@
 fileFormatVersion: 2
 guid: 1978ece7d09a1c84ab86c531a8a2f80b
 TextureImporter:
+  fileIDToRecycleName:
+    21300000: p_torso_walk
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -24,9 +26,9 @@ TextureImporter:
   maxTextureSize: 1024
   textureSettings:
     filterMode: -1
-    aniso: -1
+    aniso: 1
     mipBias: -1
-    wrapMode: -1
+    wrapMode: 1
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
